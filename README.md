@@ -27,7 +27,8 @@ The installer script and related patch add functionality to zabbix-web to displa
 ## Working with Patches
 1. _Do not ever delete your .patch files or the installer_
 2. _You must always reverse the patch before upgrading zabbix-web_
-Working with patches is a bit different from rpms, and you definitely can break stuff badly if you're not careful.  _gauge-installer_ tries to keep you from doing some 'bad things' when applying the patch.  It can't save you from a ```yum upgrade zabbix-web``` on top of the patch. . _Do not ever delete your .patch files or the installer_  _You must always reverse the patch before upgrading zabbix-web._ 
+
+Working with patches is a bit different from rpms, and you definitely can break stuff badly if you're not careful.  _gauge-installer_ tries to keep you from doing some 'bad things' when applying or removing the patch.  It can't save you from a ```yum upgrade zabbix-web``` commited on top of the patched docroot. 
 
 Here's a sample install
 ```
@@ -52,4 +53,4 @@ Here's a sample install
 Open a dashboard and add a widget.  You should see 'Gauge' as a new selection.  Edit widget requires an Item, Label, Min and Max, and Minor Tick Marks.  If you dont want minor tick marks enter 1.
 
 ## Bugs
-There are quite a few.  Head over to [issues](../../../issues/) to see them all.  Please report any new ones.
+There are quite a few.  Head over to [issues](../../issues/) to see them all.  Please report any new ones.
