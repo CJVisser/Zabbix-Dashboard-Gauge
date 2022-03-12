@@ -1,0 +1,113 @@
+#!/bin/sh
+
+# constants
+PATCH="/usr/bin/patch"
+GREP="/usr/bin/grep"
+CUT="/usr/bin/cut"
+TAR="/usr/bin/tar"
+DATE="/usr/bin/date"
+
+# vars
+PATCH_OPTS="-N -p0"
+NO_TAR=false
+DOCROOT="/usr/share/zabbix"
+TEMPDIR="/tmp"
+INSTALL="install"
+
+# functions
+usage()
+{
+   echo "$0 [-h] [-r] [-T]"
+   echo "   -h   This help"
+   echo "   -r   Reverse installed patch"
+   echo "   -T   Do not backup docroot (install only)"
+   exit 0
+}
+echo "****************************************************************"
+echo "* ZABBIX DASHBOARD GAUGE INSTALLER                             *"
+echo "*                                                              *"
+echo "* This script runs some pre-flight tests to determine if you   *"
+echo "* can safely patch your zabbix ui to add the gauge widgets.    *"
+echo "****************************************************************"
+echo
+
+# getopts
+while getopts 'rTh' opt
+do
+   case $opt in
+      h) usage ;;
+      r) PATCH_OPTS="-R ${PATCH_OPTS}"; NO_TAR=true ; INSTALL="uninstall" ;;
+      T) NO_TAR=true ;; 
+   esac
+done
+
+# verify kit
+echo -n "Verifying installed binaries ... "
+[ ! -e "${PATCH}" ] && echo "Missing patch binary at ${PATCH}" && exit
+[ ! -e "${GREP}" ] && echo "Missing grep binary at ${GREP}" && exit
+[ ! -e "${CUT}" ] && echo "Missing cut binary at ${CUT}" && exit
+[ ! -e "${TAR}" ] && echo "Missing tar binary at ${TAR}" && exit
+[ ! -e "${DATE}" ] && echo "Missing date binary at ${DATE}" && exit
+echo "OK"
+
+# confirm docroot
+echo
+echo -n "Zabbix Web Docroot [${DOCROOT}]: "
+read location
+
+[ ! -z "${location}" ] && DOCROOT=${location}
+[ ! -d "${DOCROOT}" ] && echo "ERROR: Directory ${DOCROOT} does not exist" && exit
+
+PATCH_OPTS="-d ${DOCROOT} ${PATCH_OPTS}"
+
+# verify docroot
+echo -n "Verifying zabbix release ... "
+VERSION=`$GREP 'ZABBIX_VERSION' $DOCROOT/include/defines.inc.php 2>/dev/null | $CUT -d"'" -f4`
+
+[ -z "${VERSION}" ] && echo "ERROR: Unknown Zabbix server version" && exit
+echo "${VERSION}"
+
+# confirm we have a patch for this release
+echo -n "Looking for the patch ... "
+ZABBIX_PATCH_FILE=`echo ./zabbix-${VERSION}-gauge.patch`
+
+[ ! -e ${ZABBIX_PATCH_FILE} ] && echo "ERROR: Patch file for this release was not found" && exit 
+echo "OK"
+
+# backup docroot
+if [ "${NO_TAR}" = "false" ]; then
+   TAR_FILE="${TEMPDIR}/zabbix-web-${VERSION}-`${DATE} +%s`.tar"
+   echo -n "Backing up ${DOCROOT} to ${TAR_FILE} ... "
+   ${TAR} cpf ${TAR_FILE} ${DOCROOT} 2> /dev/null
+   if [ $? -ne "0" ]; then 
+      echo "WARNING: Backup did not complete"
+   else
+      echo "OK"
+   fi
+fi
+
+# test the patch
+echo
+echo "The script will now test the patch to be ${INSTALL}ed."
+echo -n "Press [ENTER] to begin or CTRL-C to exit: "
+read keypress
+
+echo
+echo "Testing patch ${INSTALL}"
+${PATCH} --dry-run $PATCH_OPTS < ${ZABBIX_PATCH_FILE} 
+[ $? -ne "0" ] && echo "ERROR: Patch test failed" && exit
+echo "Patch test completed successfully."
+
+# (un)install the patch
+echo
+echo -n "Press [ENTER] to ${INSTALL} the patch, CTRL-C to exit: "
+read keypress
+
+echo
+echo "Performing patch ${INSTALL}"
+${PATCH} $PATCH_OPTS < ${ZABBIX_PATCH_FILE}
+[ $? -ne "0" ] && echo "ERROR: Patch did not ${INSTALL} correctly" && exit
+echo "Patch ${INSTALL} completed successfully."
+
+echo 
+echo "Please refresh your browser before continuing."
