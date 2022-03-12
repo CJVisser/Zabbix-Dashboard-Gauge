@@ -24,11 +24,23 @@ The installer script and related patch add functionality to zabbix-web to displa
 3. Restart your web server  
 
 ## Working with Patches
-Working with patches is a bit different from rpms, and you definitely can break stuff badly if you're not careful.  The gauge-installer script tries to keep you from doing 'bad things' and it will backup your docroot to a tar file before install.  You should remember to always reverse the patch before upgrading zabbix-web.
+Working with patches is a bit different from rpms, and you definitely can break stuff badly if you're not careful.  _gauge-installer_ tries to keep you from doing some 'bad things' and it will backup your docroot to a tar file before install. _Do not ever delete your .patch files or the installer_  _You must always reverse the patch before upgrading zabbix-web._ 
 
 Here's a sample install
 ```
-gauge-installer
+# ./gauge-installer -h
+****************************************************************
+* ZABBIX DASHBOARD GAUGE INSTALLER                             *
+*                                                              *
+* This script runs some pre-flight tests to determine if you   *
+* can safely patch your zabbix ui to add the gauge widgets.    *
+****************************************************************
+
+./gauge-installer [-h] [-r] [-T]
+   -h   This help
+   -r   Reverse installed patch
+   -T   Do not backup docroot (install only)
+#
 ```
 
 ## Configuring the widget
