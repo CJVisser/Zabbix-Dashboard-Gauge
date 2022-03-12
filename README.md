@@ -17,11 +17,11 @@ The installer script and related patch add functionality to zabbix-web to displa
 
 ## Prerequisites
 * Zabbix 6.0.1
-* Linux binaries: patch, date, grep, cut, date, bash
+* Linux binaries: patch, grep, tar, cut, date, bash
 
 ## Install
-1. Download gauge-installer and the patch file for your Zabbix release
-2. As root, run _gauge-installer_, follow the prompts, and complete a successful install
+1. Download _gauge-installer_ and the patch file for your Zabbix release
+2. As root, ```./gauge-installer``` and complete a successful install
 3. Restart your web server  
 
 ## Working with Patches
