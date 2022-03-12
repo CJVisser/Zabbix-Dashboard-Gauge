@@ -25,7 +25,9 @@ The installer script and related patch add functionality to zabbix-web to displa
 3. Restart your web server  
 
 ## Working with Patches
-Working with patches is a bit different from rpms, and you definitely can break stuff badly if you're not careful.  _gauge-installer_ tries to keep you from doing some 'bad things' and it will backup your docroot to a tar file before install. _Do not ever delete your .patch files or the installer_  _You must always reverse the patch before upgrading zabbix-web._ 
+1. _Do not ever delete your .patch files or the installer_
+2. _You must always reverse the patch before upgrading zabbix-web_
+Working with patches is a bit different from rpms, and you definitely can break stuff badly if you're not careful.  _gauge-installer_ tries to keep you from doing some 'bad things' when applying the patch.  It can't save you from a ```yum upgrade zabbix-web``` on top of the patch. . _Do not ever delete your .patch files or the installer_  _You must always reverse the patch before upgrading zabbix-web._ 
 
 Here's a sample install
 ```
