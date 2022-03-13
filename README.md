@@ -115,7 +115,7 @@ Looking for the patch ... OK
 The script will now test the patch to be uninstalled.
 Press [ENTER] to begin or CTRL-C to exit: 
 
-Testing patch install
+Testing patch uninstall
 checking file app/controllers/CControllerWidgetGaugeView.php
 checking file app/views/monitoring.widget.gauge.view.php
 checking file assets/styles/blue-theme.css
