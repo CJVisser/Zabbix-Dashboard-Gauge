@@ -8,7 +8,7 @@ Add a Gauge Widget to your Zabbix Dashboards.
 
 ## About the Gauge
 ![Dashboard Gauge Cluster](images/gauge-image-small.png)
-The design of the Zabbix Gauge Widget is stronly influenced by [Google Chart's 'Gauge'](https://developers.google.com/chart/interactive/docs/gallery/gauge). It tries to emulate the configurable features of the google release but it renders as svg in zabbix using native function calls.
+The design of the Zabbix Gauge Widget is stronly influenced by [Google Chart's 'Gauge'](https://developers.google.com/chart/interactive/docs/gallery/gauge). It tries to emulate the configurable features of the google release but it renders as svg using zabbix native function calls.
 
 Configuration of the gauge supports naming the widget, labeling the gauge, selecting your item, the gauge range, displaying the number of 'minor ticks' between 'major ticks', and highlighting up to 3 regions of the gauge to indicate normal and problem value ranges.  The gauge also shows the value with units currently displayed.
 
@@ -48,9 +48,8 @@ Here's a sample install
 ```
 
 ## Configuring the widget
-![Dashboard Gauge](images/gauge-edit-widget.png)
-
 Open a dashboard and add a widget.  You should see 'Gauge' as a new selection.  Edit widget requires an Item, Label, Min and Max, and Minor Tick Marks.  If you dont want minor tick marks enter 1.
 
+![Dashboard Gauge](images/gauge-edit-widget.png)
 ## Bugs
 There are quite a few.  Head over to [issues](../../issues/) to see them all.  Please report any new ones.
