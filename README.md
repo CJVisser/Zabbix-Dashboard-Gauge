@@ -30,7 +30,7 @@ The installer script and related patch add functionality to zabbix-web to displa
 
 Working with patches is a bit different from rpms, and you definitely can break stuff badly if you're not careful.  _gauge-installer_ tries to keep you from doing some 'bad things' when applying or removing the patch.  It can't save you from a ```yum upgrade zabbix-web``` commited on top of the patched docroot. 
 
-Here's a sample install
+Here's a sample install:
 ```
 # ./gauge-installer -h
 ****************************************************************
@@ -130,7 +130,7 @@ Please refresh your browser before continuing.
 ```
 
 ## Configuring the widget
-Open a dashboard and add a widget.  You should see 'Gauge' as a new selection.  Edit widget requires an Item, Label, Min and Max, and Minor Tick Marks.  Only numeric item types are supported. If you dont want minor tick marks, enter 1.
+Open a dashboard and add a widget.  You should see 'Gauge' as a new selection.  Edit widget requires an Item, Gauge Label, Gauge Minimum and Maximum, and Minor Tick Marks.  Only numeric item types are supported. If you dont want minor tick marks, enter 1.
 
 ![Dashboard Gauge](images/gauge-edit-widget.png)
 ## Bugs
