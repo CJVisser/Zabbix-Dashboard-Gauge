@@ -22,7 +22,7 @@ The installer script and related patch add functionality to zabbix-web to displa
 ## Install
 1. Download _gauge-installer_ and the patch file for your Zabbix release
 2. As root, ```./gauge-installer``` and complete a successful install
-3. Browser-refresh you dashboard pages  
+3. Browser-refresh your dashboard pages  
 
 ## Working with Patches
 1. _Do not ever delete your .patch files or the installer_
