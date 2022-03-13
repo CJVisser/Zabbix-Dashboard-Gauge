@@ -1,9 +1,9 @@
 diff --git app/controllers/CControllerWidgetGaugeView.php app/controllers/CControllerWidgetGaugeView.php
 new file mode 100644
-index 0000000..0e91f80
+index 0000000..a68c0a6
 --- /dev/null
 +++ app/controllers/CControllerWidgetGaugeView.php
-@@ -0,0 +1,104 @@
+@@ -0,0 +1,102 @@
 +<?php
 +/*
 +** Copyright (C) 2022 Jack Valko
@@ -58,8 +58,7 @@ index 0000000..0e91f80
 +			if ($fields['itemid']) {
 +				$item = API::Item()->get([
 +					'output' => ['itemid', 'name', 'key_', 'lastvalue', 'units'],
-+					'selectHosts' => ['name'],
-+					'itemid' => $fields['itemid'],
++					'itemids' => $itemid,
 +					'webitems' => true,
 +					'preservekeys' => true
 +				]);
@@ -69,7 +68,6 @@ index 0000000..0e91f80
 +				$error = _('No permissions to referred object or it does not exist!' . json_encode($fields));
 +			}
 +		}
-+
 +
 +		// regions
 +		$colors = array('#ffffff',
@@ -110,10 +108,10 @@ index 0000000..0e91f80
 +}
 diff --git app/views/monitoring.widget.gauge.view.php app/views/monitoring.widget.gauge.view.php
 new file mode 100644
-index 0000000..7159a54
+index 0000000..8c16a6c
 --- /dev/null
 +++ app/views/monitoring.widget.gauge.view.php
-@@ -0,0 +1,244 @@
+@@ -0,0 +1,242 @@
 +<?php
 +/*
 +** Copyright (C) 2022 Jack Valko
@@ -140,6 +138,7 @@ index 0000000..7159a54
 +	/* variable */
 +	$id = $data['itemid'];
 +	$chart_div = 'gauge_'.$id;
++	$chart_svg = 'svg_'.$id;
 +	$cx = 75;
 +	$cy = 75;
 +	$max_radians = 240;
@@ -228,14 +227,11 @@ index 0000000..7159a54
 +	$gauge_item = (new CDiv())
 +		->setId($chart_div)
 +		->addClass('clock')
-+ 		->setAttribute('color_string', $data['color_string'])
-+		->setAttribute('data_name', $data['name'])
-+		->setAttribute('data_item', $data['item'])
-+		->setAttribute('data_lastvalue', $data['item'][$id]['lastvalue'])
 +		->addItem(
 +			(new CSvg())
 +				/* attributes */
-+				->setAttribute('id', 'test-svg')
++				->setId($chart_svg)
++				/* ->setAttribute('id', 'test-svg') */
 +				->addClass('gauge')
 +				->setAttribute('viewBox', '0 0 150 150')
 +				/* defs */

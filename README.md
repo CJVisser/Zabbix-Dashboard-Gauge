@@ -26,7 +26,8 @@ The installer script and related patch add functionality to zabbix-web to displa
 
 ## Working with Patches
 1. _Do not ever delete your .patch files or the installer_
-2. _You must always reverse the patch before upgrading zabbix-web_
+2. _If you need to upgrade your patch first uninstall the old one, download the new one, then repatch_ 
+3. _You must always reverse the patch before upgrading zabbix-web_
 
 Working with patches is a bit different from rpms, and you definitely can break stuff badly if you're not careful.  _gauge-installer_ tries to keep you from doing some 'bad things' when applying or removing the patch.  It can't save you from a ```yum upgrade zabbix-web``` commited on top of the patched docroot. 
 
