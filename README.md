@@ -130,7 +130,7 @@ Please refresh your browser before continuing.
 ```
 
 ## Configuring the widget
-Open a dashboard and add a widget.  You should see 'Gauge' as a new selection.  Edit widget requires an Item, Label, Min and Max, and Minor Tick Marks.  If you dont want minor tick marks enter 1.
+Open a dashboard and add a widget.  You should see 'Gauge' as a new selection.  Edit widget requires an Item, Label, Min and Max, and Minor Tick Marks.  Only numeric item types are supported. If you dont want minor tick marks, enter 1.
 
 ![Dashboard Gauge](images/gauge-edit-widget.png)
 ## Bugs
