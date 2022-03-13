@@ -6,6 +6,7 @@ Add a Gauge Widget to your Zabbix Dashboards.
 ##### March 14, 2022
 * ENHANCEMENT: Patch now available for Zabbix 5.4.11
 * ENHANCEMENT: Now with dark mode!
+* ENHANCEMENT: Changed padding value, gauge is a little larger
 * FIX: Performance issue with API query resolved
 
 ##### March 13, 2022
