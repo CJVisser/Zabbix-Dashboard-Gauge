@@ -8,7 +8,7 @@ Add a Gauge Widget to your Zabbix Dashboards.
 
 ## About the Gauge
 ![Dashboard Gauge Cluster](images/gauge-image-small.png)
-The design of the Zabbix Gauge Widget is stronly influenced by [Google Chart's 'Gauge'](https://developers.google.com/chart/interactive/docs/gallery/gauge). It tries to emulate the configurable features of the google release but it renders as svg using zabbix native function calls.
+The design of the Zabbix Gauge Widget is stronly influenced by [Google Chart's 'Gauge'](https://developers.google.com/chart/interactive/docs/gallery/gauge). It tries to emulate most of the configurable features of the google release but it renders as svg using zabbix native function calls. Because it's a native widget, it can be resized or moved around just like any other.
 
 Configuration of the gauge supports naming the widget, labeling the gauge, selecting your item, the gauge range, displaying the number of 'minor ticks' between 'major ticks', and highlighting up to 3 regions of the gauge to indicate normal and problem value ranges.  The gauge also shows the value with units currently displayed.
 
