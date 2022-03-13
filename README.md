@@ -147,6 +147,8 @@ Please refresh your browser before continuing.
 ## Configuring the widget
 Open a dashboard and add a widget.  You should see 'Gauge' as a new selection.  Edit widget requires an Item, Gauge Label, Gauge Minimum and Maximum, and Minor Tick Marks.  Only numeric item types are supported. If you dont want minor tick marks, enter 1.
 
+If you configure highlighted regions they will overlap and there is no collision detection.  Each region is applied in layers, from first to third.
+
 ![Dashboard Gauge](images/gauge-edit-widget.png)
 ## Bugs
 There are quite a few.  Head over to [issues](../../issues/) to see them all.  Please report any new ones.
