@@ -358,6 +358,72 @@ index 0000000..7159a54
 +}
 +
 +echo json_encode($output);
+diff --git include/classes/mvc/CRouter.php include/classes/mvc/CRouter.php
+index 591be2a..9656f9c 100644
+--- include/classes/mvc/CRouter.php
++++ include/classes/mvc/CRouter.php
+@@ -302,6 +302,7 @@ class CRouter {
+ 		'widget.dataover.view'						=> ['CControllerWidgetDataOverView',					'layout.widget',		'monitoring.widget.dataover.view'],
+ 		'widget.discovery.view'						=> ['CControllerWidgetDiscoveryView',					'layout.widget',		'monitoring.widget.discovery.view'],
+ 		'widget.favgraphs.view'						=> ['CControllerWidgetFavGraphsView',					'layout.widget',		'monitoring.widget.favgraphs.view'],
++ 		'widget.gauge.view'					=> ['CControllerWidgetGaugeView',					'layout.widget',		'monitoring.widget.gauge.view'],
+ 		'widget.favmaps.view'						=> ['CControllerWidgetFavMapsView',						'layout.widget',		'monitoring.widget.favmaps.view'],
+ 		'widget.geomap.view'						=> ['CControllerWidgetGeoMapView',						'layout.widget',		'monitoring.widget.geomap.view'],
+ 		'widget.graph.view'							=> ['CControllerWidgetGraphView',						'layout.widget',		'monitoring.widget.graph.view'],
+diff --git include/classes/widgets/CWidgetConfig.php include/classes/widgets/CWidgetConfig.php
+index d8a4a55..d5c6fc7 100644
+--- include/classes/widgets/CWidgetConfig.php
++++ include/classes/widgets/CWidgetConfig.php
+@@ -55,6 +55,7 @@ class CWidgetConfig {
+ 			WIDGET_DISCOVERY			=> _('Discovery status'),
+ 			WIDGET_FAV_GRAPHS			=> _('Favorite graphs'),
+ 			WIDGET_FAV_MAPS				=> _('Favorite maps'),
++			WIDGET_GAUGE				=> _('Gauge'),
+ 			WIDGET_GEOMAP				=> _('Geomap'),
+ 			WIDGET_ITEM					=> _('Item value'),
+ 			WIDGET_GRAPH				=> _('Graph (classic)'),
+@@ -100,6 +101,7 @@ class CWidgetConfig {
+ 			WIDGET_DISCOVERY			=> 'CWidget',
+ 			WIDGET_FAV_GRAPHS			=> 'CWidget',
+ 			WIDGET_FAV_MAPS				=> 'CWidget',
++			WIDGET_GAUGE				=> 'CWidget',
+ 			WIDGET_GEOMAP				=> 'CWidgetGeoMap',
+ 			WIDGET_ITEM					=> 'CWidgetItem',
+ 			WIDGET_GRAPH				=> 'CWidgetGraph',
+@@ -171,6 +173,7 @@ class CWidgetConfig {
+ 			WIDGET_DISCOVERY			=> ['width' => 6,	'height' => 3],
+ 			WIDGET_FAV_GRAPHS			=> ['width' => 4,	'height' => 3],
+ 			WIDGET_FAV_MAPS				=> ['width' => 4,	'height' => 3],
++			WIDGET_GAUGE				=> ['width' => 4,	'height' => 4],
+ 			WIDGET_GEOMAP				=> ['width' => 12,	'height' => 5],
+ 			WIDGET_ITEM					=> ['width' => 4,	'height' => 3],
+ 			WIDGET_GRAPH				=> ['width' => 12,	'height' => 5],
+@@ -267,6 +270,7 @@ class CWidgetConfig {
+ 			case WIDGET_DATA_OVER:
+ 			case WIDGET_TOP_HOSTS:
+ 			case WIDGET_DISCOVERY:
++			case WIDGET_GAUGE:
+ 			case WIDGET_GEOMAP:
+ 			case WIDGET_GRAPH:
+ 			case WIDGET_GRAPH_PROTOTYPE:
+@@ -370,6 +374,7 @@ class CWidgetConfig {
+ 		if ($view_mode == ZBX_WIDGET_VIEW_MODE_HIDDEN_HEADER) {
+ 			switch ($type) {
+ 				case WIDGET_CLOCK:
++				case WIDGET_GAUGE:
+ 				case WIDGET_GRAPH:
+ 				case WIDGET_MAP:
+ 				case WIDGET_SVG_GRAPH:
+@@ -435,6 +440,9 @@ class CWidgetConfig {
+ 			case WIDGET_DATA_OVER:
+ 				return new CWidgetFormDataOver($data, $templateid);
+ 
++			case WIDGET_GAUGE:
++				return new CWidgetFormGauge($data, $templateid);
++
+ 			case WIDGET_GEOMAP:
+ 				return new CWidgetFormGeoMap($data, $templateid);
+ 
 diff --git include/classes/widgets/forms/CWidgetFormGauge.php include/classes/widgets/forms/CWidgetFormGauge.php
 new file mode 100644
 index 0000000..d57d732
@@ -659,60 +725,6 @@ index 0000000..540bec3
 +	'form' => $form,
 +	'scripts' => $scripts
 +];
-diff --git include/classes/widgets/CWidgetConfig.php include/classes/widgets/CWidgetConfig.php
-index d8a4a55..d5c6fc7 100644
---- include/classes/widgets/CWidgetConfig.php
-+++ include/classes/widgets/CWidgetConfig.php
-@@ -55,6 +55,7 @@ class CWidgetConfig {
-                        WIDGET_DISCOVERY                        => _('Discovery status'),
-                        WIDGET_FAV_GRAPHS                       => _('Favorite graphs'),
-                        WIDGET_FAV_MAPS                         => _('Favorite maps'),
-+                       WIDGET_GAUGE                            => _('Gauge'),
-                        WIDGET_GEOMAP                           => _('Geomap'),
-                        WIDGET_ITEM                                     => _('Item value'),
-                        WIDGET_GRAPH                            => _('Graph (classic)'),
-@@ -100,6 +101,7 @@ class CWidgetConfig {
-                        WIDGET_DISCOVERY                        => 'CWidget',
-                        WIDGET_FAV_GRAPHS                       => 'CWidget',
-                        WIDGET_FAV_MAPS                         => 'CWidget',
-+                       WIDGET_GAUGE                            => 'CWidget',
-                        WIDGET_GEOMAP                           => 'CWidgetGeoMap',
-                        WIDGET_ITEM                                     => 'CWidgetItem',
-                        WIDGET_GRAPH                            => 'CWidgetGraph',
-@@ -171,6 +173,7 @@ class CWidgetConfig {
-                        WIDGET_DISCOVERY                        => ['width' => 6,       'height' => 3],
-                        WIDGET_FAV_GRAPHS                       => ['width' => 4,       'height' => 3],
-                        WIDGET_FAV_MAPS                         => ['width' => 4,       'height' => 3],
-+                       WIDGET_GAUGE                            => ['width' => 4,       'height' => 4],
-                        WIDGET_GEOMAP                           => ['width' => 12,      'height' => 5],
-                        WIDGET_ITEM                                     => ['width' => 4,       'height' => 3],
-                        WIDGET_GRAPH                            => ['width' => 12,      'height' => 5],
-@@ -267,6 +270,7 @@ class CWidgetConfig {
-                        case WIDGET_DATA_OVER:
-                        case WIDGET_TOP_HOSTS:
-                        case WIDGET_DISCOVERY:
-+                       case WIDGET_GAUGE:
-                        case WIDGET_GEOMAP:
-                        case WIDGET_GRAPH:
-                        case WIDGET_GRAPH_PROTOTYPE:
-@@ -370,6 +374,7 @@ class CWidgetConfig {
-                if ($view_mode == ZBX_WIDGET_VIEW_MODE_HIDDEN_HEADER) {
-                        switch ($type) {
-                                case WIDGET_CLOCK:
-+                               case WIDGET_GAUGE:
-                                case WIDGET_GRAPH:
-                                case WIDGET_MAP:
-                                case WIDGET_SVG_GRAPH:
-@@ -435,6 +440,9 @@ class CWidgetConfig {
-                        case WIDGET_DATA_OVER:
-                                return new CWidgetFormDataOver($data, $templateid);
-
-+                       case WIDGET_GAUGE:
-+                               return new CWidgetFormGauge($data, $templateid);
-+
-                        case WIDGET_GEOMAP:
-                                return new CWidgetFormGeoMap($data, $templateid);
-
 diff --git include/defines.inc.php include/defines.inc.php
 index ee20da3..90982b5 100644
 --- include/defines.inc.php
@@ -725,15 +737,3 @@ index ee20da3..90982b5 100644
  define('WIDGET_GEOMAP',				'geomap');
  define('WIDGET_GRAPH',				'graph');
  define('WIDGET_GRAPH_PROTOTYPE',	'graphprototype');
-diff --git include/classes/mvc/CRouter.php include/classes/mvc/CRouter.php
-index 591be2a..9656f9c 100644
---- include/classes/mvc/CRouter.php
-+++ include/classes/mvc/CRouter.php
-@@ -302,6 +302,7 @@ class CRouter {
- 		'widget.dataover.view'						=> ['CControllerWidgetDataOverView',					'layout.widget',		'monitoring.widget.dataover.view'],
- 		'widget.discovery.view'						=> ['CControllerWidgetDiscoveryView',					'layout.widget',		'monitoring.widget.discovery.view'],
- 		'widget.favgraphs.view'						=> ['CControllerWidgetFavGraphsView',					'layout.widget',		'monitoring.widget.favgraphs.view'],
-+ 		'widget.gauge.view'					=> ['CControllerWidgetGaugeView',					'layout.widget',		'monitoring.widget.gauge.view'],
- 		'widget.favmaps.view'						=> ['CControllerWidgetFavMapsView',						'layout.widget',		'monitoring.widget.favmaps.view'],
- 		'widget.geomap.view'						=> ['CControllerWidgetGeoMapView',						'layout.widget',		'monitoring.widget.geomap.view'],
- 		'widget.graph.view'							=> ['CControllerWidgetGraphView',						'layout.widget',		'monitoring.widget.graph.view'],

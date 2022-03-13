@@ -23,12 +23,12 @@ usage()
    echo "   -T   Do not backup docroot (install only)"
    exit 0
 }
-echo "****************************************************************"
-echo "* ZABBIX DASHBOARD GAUGE INSTALLER                             *"
-echo "*                                                              *"
-echo "* This script runs some pre-flight tests to determine if you   *"
-echo "* can safely patch your zabbix ui to add the gauge widgets.    *"
-echo "****************************************************************"
+echo "******************************************************************"
+echo "* ZABBIX DASHBOARD GAUGE INSTALLER                               *"
+echo "*                                                                *"
+echo "* This script runs some pre-flight tests to determine if you can *"
+echo "* safely patch before updating zabbix-web with the gauge widget. *"
+echo "******************************************************************"
 echo
 
 # getopts
