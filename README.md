@@ -22,7 +22,7 @@ The installer script and related patch add functionality to zabbix-web to displa
 ## Install
 1. Download _gauge-installer_ and the patch file for your Zabbix release
 2. As root, ```./gauge-installer``` and complete a successful install
-3. Restart your web server  
+3. Browser-refresh you dashboard pages  
 
 ## Working with Patches
 1. _Do not ever delete your .patch files or the installer_
@@ -40,10 +40,52 @@ Here's a sample install
 * can safely patch your zabbix ui to add the gauge widgets.    *
 ****************************************************************
 
-./gauge-installer [-h] [-r] [-T]
+# ./gauge-installer [-h] [-r] [-T]
    -h   This help
    -r   Reverse installed patch
    -T   Do not backup docroot (install only)
+#
+# # ./gauge-installer
+******************************************************************
+* ZABBIX DASHBOARD GAUGE INSTALLER                               *
+*                                                                *
+* This script runs some pre-flight tests to determine if you can *
+* safely patch before updating zabbix-web with the gauge widget. *
+******************************************************************
+
+Verifying installed binaries ... OK
+
+Zabbix Web Docroot [/usr/share/zabbix]: 
+Verifying zabbix release ... 6.0.1
+Looking for the patch ... OK
+Backing up /usr/share/zabbix to /tmp/zabbix-web-6.0.1-1647143556.tar ... OK
+
+The script will now test the patch to be installed.
+Press [ENTER] to begin or CTRL-C to exit: 
+
+Testing patch install
+checking file app/controllers/CControllerWidgetGaugeView.php
+checking file app/views/monitoring.widget.gauge.view.php
+checking file include/classes/mvc/CRouter.php
+checking file include/classes/widgets/CWidgetConfig.php
+checking file include/classes/widgets/forms/CWidgetFormGauge.php
+checking file include/classes/widgets/views/widget.gauge.form.view.php
+checking file include/defines.inc.php
+Patch test completed successfully.
+
+Press [ENTER] to install the patch, CTRL-C to exit: 
+
+Performing patch install
+patching file app/controllers/CControllerWidgetGaugeView.php
+patching file app/views/monitoring.widget.gauge.view.php
+patching file include/classes/mvc/CRouter.php
+patching file include/classes/widgets/CWidgetConfig.php
+patching file include/classes/widgets/forms/CWidgetFormGauge.php
+patching file include/classes/widgets/views/widget.gauge.form.view.php
+patching file include/defines.inc.php
+Patch install completed successfully.
+
+Please refresh your browser before continuing.
 #
 ```
 
