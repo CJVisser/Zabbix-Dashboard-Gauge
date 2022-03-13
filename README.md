@@ -14,12 +14,12 @@ Add a Gauge Widget to your Zabbix Dashboards.
 
 ## About the Gauge
 ![Dashboard Gauge Cluster](images/gauge-image-small.png)
-The design of the Zabbix Gauge Widget is strongly influenced by [Google Chart's 'Gauge'](https://developers.google.com/chart/interactive/docs/gallery/gauge). It tries to emulate most of the configurable features of the google release but it renders as svg using zabbix native function calls. Because it's a native widget, it can be resized or moved around just like any other.
+The design of the Zabbix Gauge Widget is strongly influenced by [Google Chart's 'Gauge'](https://developers.google.com/chart/interactive/docs/gallery/gauge). It tries to emulate most of the configurable features of the google release but it renders as svg without javascript while using zabbix native function calls. Because it's a native widget, it can be resized or moved around just like any other on your dashboard.
 
 Configuration of the gauge supports naming the widget, labeling the gauge, selecting your item, the gauge range, displaying the number of 'minor ticks' between 'major ticks', and highlighting up to 3 regions of the gauge to indicate normal and problem value ranges.  The gauge also displays the value with units.
 
 ## What's inside
-The installer script and related patch add functionality to zabbix-web to display item values in a gauge-style widget. _gauge-installer_ is an interactive script, it will confirm your zabbix docroot, zabbix release, backup your docroot into a tar file, and attempt a dry-run of the install before asking you if you really really want to install it.  There is also an option to reverse the install in case you change your mind.  See the section "Working with Patches" for more info. 
+The installer script and related patches add functionality to zabbix-web to display item values in a gauge-style widget. _gauge-installer_ is an interactive script, it will confirm your zabbix docroot, zabbix release, backup your docroot into a tar file, and attempt a dry-run of the install before asking you if you are sure you really really want to install it.  There is also an option to reverse the install in case you change your mind.  See the section "Working with Patches" for more info. 
 
 ## Prerequisites
 * Zabbix 5.4.11 or 6.0.1
@@ -32,7 +32,7 @@ The installer script and related patch add functionality to zabbix-web to displa
 
 ## Working with Patches
 1. _Do not ever delete your .patch files or the installer_
-2. _If you need to upgrade your patch first uninstall the old one, download the new one, then repatch_ 
+2. _If you need to upgrade your patch first uninstall the old one, download the new one, then apply the new patch_ 
 3. _You must always reverse the patch before upgrading zabbix-web_
 
 Working with patches is a bit different from rpms, and you definitely can break stuff badly if you're not careful.  _gauge-installer_ tries to keep you from doing some 'bad things' when applying or removing the patch.  It can't save you from a ```yum upgrade zabbix-web``` commited on top of the patched docroot. 
