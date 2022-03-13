@@ -3,6 +3,11 @@
 Add a Gauge Widget to your Zabbix Dashboards.
 
 ## What's new
+##### March 14, 2022
+* ENHANCEMENT: Patch now available for Zabbix 5.4.11
+* ENHANCEMENT: Now with dark mode!
+* FIX: Performance issue with API query resolved
+
 ##### March 13, 2022
 * Initial Public Beta Release
 
@@ -16,7 +21,7 @@ Configuration of the gauge supports naming the widget, labeling the gauge, selec
 The installer script and related patch add functionality to zabbix-web to display item values in a gauge-style widget. _gauge-installer_ is an interactive script, it will confirm your zabbix docroot, zabbix release, backup your docroot into a tar file, and attempt a dry-run of the install before asking you if you really really want to install it.  There is also an option to reverse the install in case you change your mind.  See the section "Working with Patches" for more info. 
 
 ## Prerequisites
-* Zabbix 6.0.1
+* Zabbix 5.4.11 or 6.0.1
 * Linux binaries: _patch, grep, tar, cut, date, bash_
 
 ## Install
@@ -46,7 +51,7 @@ Here's a sample install:
    -r   Reverse installed patch
    -T   Do not backup docroot (install only)
 #
-# ./gauge-installer
+# ./gauge-installer 
 ******************************************************************
 * ZABBIX DASHBOARD GAUGE INSTALLER                               *
 *                                                                *
@@ -57,9 +62,9 @@ Here's a sample install:
 Verifying installed binaries ... OK
 
 Zabbix Web Docroot [/usr/share/zabbix]: 
-Verifying zabbix release ... 6.0.1
+Verifying zabbix release ... 5.4.11
 Looking for the patch ... OK
-Backing up /usr/share/zabbix to /tmp/zabbix-web-6.0.1-1647143556.tar ... OK
+Backing up /usr/share/zabbix to /tmp/zabbix-web-5.4.11-1647204178.tar ... OK
 
 The script will now test the patch to be installed.
 Press [ENTER] to begin or CTRL-C to exit: 
@@ -67,6 +72,8 @@ Press [ENTER] to begin or CTRL-C to exit:
 Testing patch install
 checking file app/controllers/CControllerWidgetGaugeView.php
 checking file app/views/monitoring.widget.gauge.view.php
+checking file assets/styles/blue-theme.css
+checking file assets/styles/dark-theme.css
 checking file include/classes/mvc/CRouter.php
 checking file include/classes/widgets/CWidgetConfig.php
 checking file include/classes/widgets/forms/CWidgetFormGauge.php
@@ -79,6 +86,8 @@ Press [ENTER] to install the patch, CTRL-C to exit:
 Performing patch install
 patching file app/controllers/CControllerWidgetGaugeView.php
 patching file app/views/monitoring.widget.gauge.view.php
+patching file assets/styles/blue-theme.css
+patching file assets/styles/dark-theme.css
 patching file include/classes/mvc/CRouter.php
 patching file include/classes/widgets/CWidgetConfig.php
 patching file include/classes/widgets/forms/CWidgetFormGauge.php
@@ -87,7 +96,7 @@ patching file include/defines.inc.php
 Patch install completed successfully.
 
 Please refresh your browser before continuing.
-#
+
 # ./gauge-installer -r
 ******************************************************************
 * ZABBIX DASHBOARD GAUGE INSTALLER                               *
@@ -105,9 +114,11 @@ Looking for the patch ... OK
 The script will now test the patch to be uninstalled.
 Press [ENTER] to begin or CTRL-C to exit: 
 
-Testing patch uninstall
+Testing patch install
 checking file app/controllers/CControllerWidgetGaugeView.php
 checking file app/views/monitoring.widget.gauge.view.php
+checking file assets/styles/blue-theme.css
+checking file assets/styles/dark-theme.css
 checking file include/classes/mvc/CRouter.php
 checking file include/classes/widgets/CWidgetConfig.php
 checking file include/classes/widgets/forms/CWidgetFormGauge.php
@@ -120,6 +131,8 @@ Press [ENTER] to uninstall the patch, CTRL-C to exit:
 Performing patch uninstall
 patching file app/controllers/CControllerWidgetGaugeView.php
 patching file app/views/monitoring.widget.gauge.view.php
+patching file assets/styles/blue-theme.css
+patching file assets/styles/dark-theme.css
 patching file include/classes/mvc/CRouter.php
 patching file include/classes/widgets/CWidgetConfig.php
 patching file include/classes/widgets/forms/CWidgetFormGauge.php
