@@ -16,7 +16,7 @@ Add a Gauge Widget to your Zabbix Dashboards.
 ![Dashboard Gauge Cluster](images/gauge-image-small.png)
 The design of the Zabbix Gauge Widget is stronly influenced by [Google Chart's 'Gauge'](https://developers.google.com/chart/interactive/docs/gallery/gauge). It tries to emulate most of the configurable features of the google release but it renders as svg using zabbix native function calls. Because it's a native widget, it can be resized or moved around just like any other.
 
-Configuration of the gauge supports naming the widget, labeling the gauge, selecting your item, the gauge range, displaying the number of 'minor ticks' between 'major ticks', and highlighting up to 3 regions of the gauge to indicate normal and problem value ranges.  The gauge also shows the value with units currently displayed.
+Configuration of the gauge supports naming the widget, labeling the gauge, selecting your item, the gauge range, displaying the number of 'minor ticks' between 'major ticks', and highlighting up to 3 regions of the gauge to indicate normal and problem value ranges.  The gauge also displays the value with units.
 
 ## What's inside
 The installer script and related patch add functionality to zabbix-web to display item values in a gauge-style widget. _gauge-installer_ is an interactive script, it will confirm your zabbix docroot, zabbix release, backup your docroot into a tar file, and attempt a dry-run of the install before asking you if you really really want to install it.  There is also an option to reverse the install in case you change your mind.  See the section "Working with Patches" for more info. 
