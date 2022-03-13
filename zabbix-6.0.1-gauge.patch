@@ -108,10 +108,10 @@ index 0000000..a68c0a6
 +}
 diff --git app/views/monitoring.widget.gauge.view.php app/views/monitoring.widget.gauge.view.php
 new file mode 100644
-index 0000000..8c16a6c
+index 0000000..d38191a
 --- /dev/null
 +++ app/views/monitoring.widget.gauge.view.php
-@@ -0,0 +1,242 @@
+@@ -0,0 +1,235 @@
 +<?php
 +/*
 +** Copyright (C) 2022 Jack Valko
@@ -226,12 +226,11 @@ index 0000000..8c16a6c
 +	/* gauge config */
 +	$gauge_item = (new CDiv())
 +		->setId($chart_div)
-+		->addClass('clock')
++		->addClass('gauge')
 +		->addItem(
 +			(new CSvg())
 +				/* attributes */
 +				->setId($chart_svg)
-+				/* ->setAttribute('id', 'test-svg') */
 +				->addClass('gauge')
 +				->setAttribute('viewBox', '0 0 150 150')
 +				/* defs */
@@ -244,7 +243,6 @@ index 0000000..8c16a6c
 +						->setAttribute('y1', $cy)
 +						->setAttribute('x2', '127')
 +						->setAttribute('y2', $cy)
-+						->setAttribute('stroke', '#000000')
 +						->setAttribute('stroke-width', '0.5')
 +					)
 +					->addItem(
@@ -254,7 +252,6 @@ index 0000000..8c16a6c
 +						->setAttribute('y1', $cy)
 +						->setAttribute('x2', '122')
 +						->setAttribute('y2', $cy)
-+						->setAttribute('stroke', '#000000')
 +						->setAttribute('stroke-width', '2')
 +					)
 +				)
@@ -305,7 +302,6 @@ index 0000000..8c16a6c
 +						->setAttribute('font-size', '6')
 +						->setAttribute('transform','rotate(210 75 75)')
 +						->setAttribute('text-anchor', 'middle')
-+						->setAttribute('fill', '#000000')
 +					)
 +					->addItem(
 +						(new Ctag('text', true, $max_value))
@@ -315,7 +311,6 @@ index 0000000..8c16a6c
 +						->setAttribute('font-size', '6')
 +						->setAttribute('transform','rotate(210 75 75)')
 +						->setAttribute('text-anchor', 'middle')
-+						->setAttribute('fill', '#000000')
 +					)
 +					->addItem(
 +						(new Ctag('text', true, $lastvalue . ' ' . $units))
@@ -325,7 +320,6 @@ index 0000000..8c16a6c
 +						->setAttribute('font-size', '15')
 +						->setAttribute('transform','rotate(210 75 75)')
 +						->setAttribute('text-anchor', 'middle')
-+						->setAttribute('fill', '#000000')
 +					)
 +
 +					->addItem(
@@ -336,7 +330,6 @@ index 0000000..8c16a6c
 +						->setAttribute('font-size', '15')
 +						->setAttribute('transform','rotate(210 75 75)')
 +						->setAttribute('text-anchor', 'middle')
-+						->setAttribute('fill', '#000000')
 +					)
 +				)
 +			)
@@ -354,6 +347,52 @@ index 0000000..8c16a6c
 +}
 +
 +echo json_encode($output);
+diff --git assets/styles/blue-theme.css assets/styles/blue-theme.css
+index f9c4ed4..9d4ce71 100644
+--- assets/styles/blue-theme.css
++++ assets/styles/blue-theme.css
+@@ -6903,3 +6903,18 @@ z-select.z-select-host-interface li[disabled] .description:not(:empty),
+ .leaflet-container {
+   height: 100%;
+   z-index: 1; }
++
++.gauge {
++  display: flex;
++  justify-content: center;
++  padding: 0 0px;
++  height: 100%; }
++
++.gauge text { 
++  fill: #000000; }
++
++.gauge #minortick {
++  stroke: #000000; }
++
++.gauge #majortick {
++  stroke: #000000; }
+diff --git assets/styles/dark-theme.css assets/styles/dark-theme.css
+index e2c516c..15b6c66 100644
+--- assets/styles/dark-theme.css
++++ assets/styles/dark-theme.css
+@@ -7009,3 +7009,18 @@ z-select.z-select-host-interface li[disabled] .description:not(:empty),
+ 
+ .selected.expanded .icon-filter::before {
+   background-position: -87px -547px; }
++
++.gauge {
++  display: flex;
++  justify-content: center;
++  padding: 0 0px;
++  height: 100%; }
++
++.gauge text {
++  fill: #ffffff; }
++
++.gauge #minortick {
++  stroke: #ffffff; }
++
++.gauge #majortick {
++  stroke: #ffffff; }
 diff --git include/classes/mvc/CRouter.php include/classes/mvc/CRouter.php
 index 591be2a..9656f9c 100644
 --- include/classes/mvc/CRouter.php
