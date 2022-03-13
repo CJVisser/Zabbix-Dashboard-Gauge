@@ -87,6 +87,46 @@ Patch install completed successfully.
 
 Please refresh your browser before continuing.
 #
+# ./gauge-installer -r
+******************************************************************
+* ZABBIX DASHBOARD GAUGE INSTALLER                               *
+*                                                                *
+* This script runs some pre-flight tests to determine if you can *
+* safely patch before updating zabbix-web with the gauge widget. *
+******************************************************************
+
+Verifying installed binaries ... OK
+
+Zabbix Web Docroot [/usr/share/zabbix]: 
+Verifying zabbix release ... 6.0.1
+Looking for the patch ... OK
+
+The script will now test the patch to be uninstalled.
+Press [ENTER] to begin or CTRL-C to exit: 
+
+Testing patch uninstall
+checking file app/controllers/CControllerWidgetGaugeView.php
+checking file app/views/monitoring.widget.gauge.view.php
+checking file include/classes/mvc/CRouter.php
+checking file include/classes/widgets/CWidgetConfig.php
+checking file include/classes/widgets/forms/CWidgetFormGauge.php
+checking file include/classes/widgets/views/widget.gauge.form.view.php
+checking file include/defines.inc.php
+Patch test completed successfully.
+
+Press [ENTER] to uninstall the patch, CTRL-C to exit: 
+
+Performing patch uninstall
+patching file app/controllers/CControllerWidgetGaugeView.php
+patching file app/views/monitoring.widget.gauge.view.php
+patching file include/classes/mvc/CRouter.php
+patching file include/classes/widgets/CWidgetConfig.php
+patching file include/classes/widgets/forms/CWidgetFormGauge.php
+patching file include/classes/widgets/views/widget.gauge.form.view.php
+patching file include/defines.inc.php
+Patch uninstall completed successfully.
+
+Please refresh your browser before continuing.
 ```
 
 ## Configuring the widget
