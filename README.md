@@ -45,7 +45,7 @@ Here's a sample install
    -r   Reverse installed patch
    -T   Do not backup docroot (install only)
 #
-# # ./gauge-installer
+# ./gauge-installer
 ******************************************************************
 * ZABBIX DASHBOARD GAUGE INSTALLER                               *
 *                                                                *
