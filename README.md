@@ -23,11 +23,11 @@ The installer script and related patches add functionality to zabbix-web to disp
 
 ## Prerequisites
 * Zabbix 5.4.11 or 6.0.1
-* Linux binaries: _patch, grep, tar, cut, date, bash_
+* Linux binaries: _patch, grep, tar, cut, date, bash, git_
 
 ## Install
-1. Download _gauge-installer_ and the patch file for your Zabbix release
-2. As root, ```./gauge-installer``` and complete a successful install
+1. ```cd /root ; git clone https://github.com/jack-valko/Zabbix-Dashboard-Gauge.git```
+2. ```cd Zabbix-Dashboard-Gauge ; ./gauge-installer```
 3. Browser-refresh your dashboard pages  
 
 ## Working with Patches
