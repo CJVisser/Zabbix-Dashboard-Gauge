@@ -47,7 +47,7 @@ Here's a sample install:
 * safely patch before updating zabbix-web with the gauge widget. *
 ******************************************************************
 
-# ./gauge-installer [-h] [-r] [-T]
+./gauge-installer [-h] [-r] [-T]
    -h   This help
    -r   Reverse installed patch
    -T   Do not backup docroot (install only)
