@@ -40,12 +40,12 @@ Working with patches is a bit different from rpms, and you definitely can break 
 Here's a sample install:
 ```
 # ./gauge-installer -h
-****************************************************************
-* ZABBIX DASHBOARD GAUGE INSTALLER                             *
-*                                                              *
-* This script runs some pre-flight tests to determine if you   *
-* can safely patch your zabbix ui to add the gauge widgets.    *
-****************************************************************
+******************************************************************
+* ZABBIX DASHBOARD GAUGE INSTALLER                               *
+*                                                                *
+* This script runs some pre-flight tests to determine if you can *
+* safely patch before updating zabbix-web with the gauge widget. *
+******************************************************************
 
 # ./gauge-installer [-h] [-r] [-T]
    -h   This help
