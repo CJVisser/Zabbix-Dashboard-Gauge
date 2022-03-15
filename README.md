@@ -3,6 +3,12 @@
 Add a Gauge Widget to your Zabbix Dashboards.
 
 ## What's new
+##### March 15, 2002
+* RELEASE: Patch now available for Zabbix 6.0.2
+* FIX: Defined boundary arcs for shaded areas to not exceed min or max
+* FIX: Needle movement restricted inside min and max
+* ENHANCEMENT: Some dark mode updates
+
 ##### March 14, 2022
 * ENHANCEMENT: Patch now available for Zabbix 5.4.11
 * ENHANCEMENT: Now with dark mode!
@@ -22,7 +28,7 @@ Configuration of the gauge supports naming the widget, labeling the gauge, selec
 The installer script and related patches add functionality to zabbix-web to display item values in a gauge-style widget. _gauge-installer_ is an interactive script, it will confirm your zabbix docroot, zabbix release, backup your docroot into a tar file, and attempt a dry-run of the install before asking you if you are sure you really really want to install it.  There is also an option to reverse the install in case you change your mind.  See the section "Working with Patches" for more info. 
 
 ## Prerequisites
-* Zabbix 5.4.11 or 6.0.1
+* Zabbix 5.4.11, 6.0.1, or 6.0.2
 * Linux binaries: _patch, grep, tar, cut, date, bash, git_
 
 ## Install
