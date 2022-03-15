@@ -103,7 +103,8 @@ patching file include/defines.inc.php
 Patch install completed successfully.
 
 Please refresh your browser before continuing.
-
+```
+```
 # ./gauge-installer -r
 ******************************************************************
 * ZABBIX DASHBOARD GAUGE INSTALLER                               *
