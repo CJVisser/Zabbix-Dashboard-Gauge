@@ -1,0 +1,808 @@
+diff --git app/controllers/CControllerWidgetGaugeView.php app/controllers/CControllerWidgetGaugeView.php
+new file mode 100644
+index 0000000..a68c0a6
+--- /dev/null
++++ app/controllers/CControllerWidgetGaugeView.php
+@@ -0,0 +1,102 @@
++<?php
++/*
++** Copyright (C) 2022 Jack Valko
++**
++** This program is free software; you can redistribute it and/or modify
++** it under the terms of the GNU General Public License as published by
++** the Free Software Foundation; either version 2 of the License, or
++** (at your option) any later version.
++**
++** This program is distributed in the hope that it will be useful,
++** but WITHOUT ANY WARRANTY; without even the implied warranty of
++** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++** GNU General Public License for more details.
++**
++** You should have received a copy of the GNU General Public License
++** along with this program; if not, write to the Free Software
++** Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
++**/
++
++/**
++ * Class for Dashboard Gauge widget view.
++ */
++class CControllerWidgetGaugeView extends CControllerWidget {
++
++	public function __construct() {
++		parent::__construct();
++
++		$this->setType(WIDGET_GAUGE);
++		$this->setValidationRules([
++			'name' => 'string',
++			'fields' => 'json',
++			'dynamic_hostid' => 'db hosts.hostid'
++		]);
++	}
++
++	protected function doAction() {
++		$fields = $this->getForm()->getFieldsData();
++                $name = $this->getDefaultName();
++
++		$itemidstring = ""; foreach($fields['itemid'] as &$itemidstring) { break; }
++		$itemid = (int)$itemidstring;
++		$error = null;
++		$same_host = true;
++		$item = [];
++
++		// Editing template dashboard?
++		if ($this->getContext() === CWidgetConfig::CONTEXT_TEMPLATE_DASHBOARD && !$this->hasInput('dynamic_hostid')) {
++			$error = _('No data.');
++		}
++		else {
++			// get last value
++			if ($fields['itemid']) {
++				$item = API::Item()->get([
++					'output' => ['itemid', 'name', 'key_', 'lastvalue', 'units'],
++					'itemids' => $itemid,
++					'webitems' => true,
++					'preservekeys' => true
++				]);
++			}
++
++			if (!$item) {
++				$error = _('No permissions to referred object or it does not exist!' . json_encode($fields));
++			}
++		}
++
++		// regions
++		$colors = array('#ffffff',
++                                CSettingsHelper::get(CSettingsHelper::SEVERITY_COLOR_1),
++                                CSettingsHelper::get(CSettingsHelper::SEVERITY_COLOR_2),
++                                CSettingsHelper::get(CSettingsHelper::SEVERITY_COLOR_3),
++                                CSettingsHelper::get(CSettingsHelper::SEVERITY_COLOR_4),
++                                CSettingsHelper::get(CSettingsHelper::SEVERITY_COLOR_5)
++                                );
++
++		$regions = array();
++		if ($fields['green_region']) {
++			array_push($regions, array('color' => "#".$colors[$fields['green_region']], 'from' => $fields['green_min'], 'to' => $fields['green_max']));
++		}
++		if ($fields['yellow_region']) {
++			array_push($regions, array('color' => "#".$colors[$fields['yellow_region']], 'from' => $fields['yellow_min'], 'to' => $fields['yellow_max']));
++		}
++		if ($fields['red_region']) {
++			array_push($regions, array('color' => "#".$colors[$fields['red_region']], 'from' => $fields['red_min'], 'to' => $fields['red_max']));
++		}
++
++		$this->setResponse(new CControllerResponseData([
++                        'name' => $this->getInput('name', $name),
++			'item' => $item,
++			'label' => !empty($fields['label']) ? $fields['label'] : 'null',
++			'min' => !empty($fields['min']) ? $fields['min'] : '0',
++			'max' => !empty($fields['max']) ? $fields['max'] : '100',
++			'minor_ticks' => !empty($fields['minor_ticks']) ? $fields['minor_ticks'] : '1',
++			'color_string' => json_encode($regions),
++			'itemid' => $itemid,
++			'same_host' => $same_host,
++			'error' => $error,
++			'user' => [
++				'debug_mode' => $this->getDebugMode()
++			]
++		]));
++	}
++}
+diff --git app/views/monitoring.widget.gauge.view.php app/views/monitoring.widget.gauge.view.php
+new file mode 100644
+index 0000000..7b81d29
+--- /dev/null
++++ app/views/monitoring.widget.gauge.view.php
+@@ -0,0 +1,257 @@
++<?php
++/*
++** Copyright (C) 2022 Jack Valko
++**
++** This program is free software; you can redistribute it and/or modify
++** it under the terms of the GNU General Public License as published by
++** the Free Software Foundation; either version 2 of the License, or
++** (at your option) any later version.
++**
++** This program is distributed in the hope that it will be useful,
++** but WITHOUT ANY WARRANTY; without even the implied warranty of
++** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++** GNU General Public License for more details.
++**
++** You should have received a copy of the GNU General Public License
++** along with this program; if not, write to the Free Software
++** Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
++**/
++
++if ($data['error'] != null) {
++	$gauge_item = (new CTableInfo())->setNoDataMessage($data['error']);
++}
++else {
++	/* variable */
++	$id = $data['itemid'];
++	$chart_div = 'gauge_'.$id;
++	$chart_svg = 'svg_'.$id;
++	$cx = 75;
++	$cy = 75;
++	$max_radians = 240;
++	$max_value = $data['max'];
++	$min_value = $data['min'];
++	$label = $data['label'];
++	$units = $data['item'][$id]['units'];
++
++        /*
++         * Function will return radian value within the range of min and max
++         */
++	function convertIntToRadian($value, $min, $max, $max_radians) {
++		$range = abs($max - $min);
++		if ($value < $min) {
++			$value = $min;
++		}
++		elseif ($value > $max) {
++			$value = $max;
++		}
++		return ((($value / $range) * $max_radians) - (($min / $range) * $max_radians));
++	}	
++
++	/* calculate tick positions */
++	$major_tick_step = 60;
++	$minor_ticks = $data['minor_ticks'];
++	$minor_arc = 60;
++
++	$ticks = new CTag('g', true);
++	$ticks->addClass('ticks');
++
++	/* major */
++	for ($i = 0; $i <= $max_radians; $i += $major_tick_step) {
++		$ticks->addItem((new CTag('use', true))->setAttribute('href', '#majortick')->setAttribute('transform', 'rotate(' . $i . ' 75 75)'));
++	}
++	/* minor */
++	if ($minor_ticks > 1) {
++		$minor_ticks_step = $minor_arc / $minor_ticks;
++		for ($i = $minor_ticks_step; $i <= $max_radians; $i += $minor_ticks_step) {
++			$ticks->addItem((new CTag('use', true))->setAttribute('href', '#minortick')->setAttribute('transform', 'rotate(' . $i . ' 75 75)'));
++		}
++	}
++
++	/* create shaded regions */
++	$shading = new CTag('g', true);
++	$shading->addClass('shading');
++
++	$regions = array();
++	$regions = json_decode($data['color_string'], true);
++
++	foreach($regions as $region) {
++		$start = convertIntToRadian($region['from'], $min_value, $max_value, $max_radians);
++		/* boundry box for highlights */
++		if ($region['from'] < $min_value) {
++			$region['from'] = $min_value;
++		}
++		elseif ($region['from'] > $max_value) {
++			$region['from'] = $max_value;;
++		}
++		if ($region['to'] < $min_value) {
++			$region['to'] = $min_value;
++		}
++		elseif ($region['to'] > $max_value) {
++			$region['to'] = $max_value;;
++		}
++		$shading->addItem(
++			(new CTag('g', true))
++			->setAttribute('transform', 'rotate(' . $start . ' ' . $cx . ' ' . $cy . ')')
++			->addItem(
++				(new Ctag('circle'))
++				->setAttribute('cx', $cx)
++				->setAttribute('cy', $cy)
++				->setAttribute('r', '53')
++				->setAttribute('fill', 'none')
++				->setAttribute('stroke', $region['color'])
++				->setAttribute('stroke-opacity', '80%')
++				->setAttribute('stroke-width', '9')
++				->setAttribute('stroke-dasharray', 'calc(2*22/7*53*' . abs($region['to'] - $region['from']) . '/' . abs($max_value - $min_value) . '*' . $max_radians . '/360), calc(2*22/7*53)')
++			)
++		);
++	}
++
++	/* create the needle */
++	$needle = new CTag('g', true);
++	$needle->addClass('needle');
++
++	$lastvalue = intval($data['item'][$id]['lastvalue']);
++	$graph_value = convertIntToRadian($lastvalue, $min_value, $max_value, $max_radians);
++
++	$needle->addItem(
++		(new CTag('g', true))
++		->setAttribute('transform','rotate(' . $graph_value . ' ' . $cx . ' ' . $cy . ')')
++		->addItem(
++			(new CTag('polygon'))
++			->setAttribute('points', '75,77 75,73 130,75')
++			->setAttribute('fill', '#ba0c1f')
++		)
++	);
++
++	$needle->addItem(
++		(new CTag('circle', true))
++		->setAttribute('cx', $cx)
++		->setAttribute('cy', $cy)
++		->setAttribute('r', '5')
++		->setAttribute('fill', '#ba0c1f')
++	);
++
++	/* gauge config */
++	$gauge_item = (new CDiv())
++		->setId($chart_div)
++		->addClass('gauge')
++		->addItem(
++			(new CSvg())
++				/* attributes */
++				->setId($chart_svg)
++				->addClass('gauge')
++				->setAttribute('viewBox', '0 0 150 150')
++				/* defs */
++				->addItem(
++					(new CTag('defs', true))
++					->addItem(
++						(new CTag('line', true))
++						->setAttribute('id', 'minortick')
++						->setAttribute('x1', '132')
++						->setAttribute('y1', $cy)
++						->setAttribute('x2', '127')
++						->setAttribute('y2', $cy)
++						->setAttribute('stroke-width', '0.5')
++					)
++					->addItem(
++						(new CTag('line', true))
++						->setAttribute('id', 'majortick')
++						->setAttribute('x1', '132')
++						->setAttribute('y1', $cy)
++						->setAttribute('x2', '122')
++						->setAttribute('y2', $cy)
++						->setAttribute('stroke-width', '2')
++					)
++				)
++				/* gauge face */
++				->addItem(
++					(new CTag('g', true))
++					->setAttribute('transform', 'rotate(-210 75 75)')
++					/* gauge border */
++					->addItem(
++						(new CTag('circle', true))
++						->addClass('outer-circle')
++						->setAttribute('cx', $cx)
++						->setAttribute('cy', $cy)
++						->setAttribute('r', '70')
++						->setAttribute('fill', 'none')
++						->setAttribute('stroke-width', '1')
++					)				
++					->addItem(
++						(new CTag('circle', true))
++						->addClass('gradient-circle')
++						->setAttribute('cx', $cx)
++						->setAttribute('cy', $cy)
++						->setAttribute('r', '66')
++						->setAttribute('fill', 'none')
++						->setAttribute('stroke-width', '7')
++					)				
++					->addItem(
++						(new CTag('circle', true))
++						->setAttribute('cx', $cx)
++						->setAttribute('cy', $cy)
++						->setAttribute('r', '61')
++						->setAttribute('fill', 'none')
++						->setAttribute('stroke', '#eeeeee')
++						->setAttribute('stroke-width', '2')
++					)				
++					/* highlighted areas */
++					->addItem($shading)
++					/* the tick(s) */
++					->addItem($ticks)
++					/* the needle */
++					->addItem($needle)
++					/* text fields */
++					->addItem(
++						(new Ctag('text', true, $min_value))
++						->setAttribute('x', '40')
++						->setAttribute('y', '100')
++						->setAttribute('font-family', 'Sans-serif')
++						->setAttribute('font-size', '6')
++						->setAttribute('transform','rotate(210 75 75)')
++						->setAttribute('text-anchor', 'middle')
++					)
++					->addItem(
++						(new Ctag('text', true, $max_value))
++						->setAttribute('x', '107')
++						->setAttribute('y', '100')
++						->setAttribute('font-family', 'Sans-serif')
++						->setAttribute('font-size', '6')
++						->setAttribute('transform','rotate(210 75 75)')
++						->setAttribute('text-anchor', 'middle')
++					)
++					->addItem(
++						(new Ctag('text', true, $lastvalue . ' ' . $units))
++						->setAttribute('x', '75')
++						->setAttribute('y', '120')
++						->setAttribute('font-family', 'Sans-serif')
++						->setAttribute('font-size', '15')
++						->setAttribute('transform','rotate(210 75 75)')
++						->setAttribute('text-anchor', 'middle')
++					)
++
++					->addItem(
++						(new Ctag('text', true, $label))
++						->setAttribute('x', '75')
++						->setAttribute('y', '60')
++						->setAttribute('font-family', 'Sans-serif')
++						->setAttribute('font-size', '15')
++						->setAttribute('transform','rotate(210 75 75)')
++						->setAttribute('text-anchor', 'middle')
++					)
++				)
++			)
++		;
++}
++
++$output = [
++	'header' => $data['name'], 
++	'body' => $gauge_item->toString()
++];
++
++if ($data['user']['debug_mode'] == GROUP_DEBUG_MODE_ENABLED) {
++	CProfiler::getInstance()->stop();
++	$output['debug'] = CProfiler::getInstance()->make()->toString();
++}
++
++echo json_encode($output);
+diff --git assets/styles/blue-theme.css assets/styles/blue-theme.css
+index 913043c..82be790 100644
+--- assets/styles/blue-theme.css
++++ assets/styles/blue-theme.css
+@@ -6980,3 +6980,24 @@ z-select.z-select-host-interface li[disabled] .description:not(:empty),
+ .leaflet-container {
+   height: 100%;
+   z-index: 1; }
++
++.gauge {
++  display: flex;
++  justify-content: center;
++  padding: 0 0px;
++  height: 100%; }
++
++.gauge text { 
++  fill: #000000; }
++
++.gauge #minortick {
++  stroke: #000000; }
++
++.gauge #majortick {
++  stroke: #000000; }
++
++.gauge .outer-circle {
++  stroke: #000000; }
++
++.gauge .gradient-circle {
++  stroke: #cccccc; }
+diff --git assets/styles/dark-theme.css assets/styles/dark-theme.css
+index 814a3b2..45e44f6 100644
+--- assets/styles/dark-theme.css
++++ assets/styles/dark-theme.css
+@@ -7086,3 +7086,24 @@ z-select.z-select-host-interface li[disabled] .description:not(:empty),
+ 
+ .selected.expanded .icon-filter::before {
+   background-position: -87px -547px; }
++
++.gauge {
++  display: flex;
++  justify-content: center;
++  padding: 0 0px;
++  height: 100%; }
++
++.gauge text {
++  fill: #ffffff; }
++
++.gauge #minortick {
++  stroke: #ffffff; }
++
++.gauge #majortick {
++  stroke: #ffffff; }
++
++.gauge .outer-circle {
++  stroke: #ffffff; }
++
++.gauge .gradient-circle {
++  stroke: #777777; }
+diff --git include/classes/mvc/CRouter.php include/classes/mvc/CRouter.php
+index 591be2a..9656f9c 100644
+--- include/classes/mvc/CRouter.php
++++ include/classes/mvc/CRouter.php
+@@ -302,6 +302,7 @@ class CRouter {
+ 		'widget.dataover.view'						=> ['CControllerWidgetDataOverView',					'layout.widget',		'monitoring.widget.dataover.view'],
+ 		'widget.discovery.view'						=> ['CControllerWidgetDiscoveryView',					'layout.widget',		'monitoring.widget.discovery.view'],
+ 		'widget.favgraphs.view'						=> ['CControllerWidgetFavGraphsView',					'layout.widget',		'monitoring.widget.favgraphs.view'],
++ 		'widget.gauge.view'					=> ['CControllerWidgetGaugeView',					'layout.widget',		'monitoring.widget.gauge.view'],
+ 		'widget.favmaps.view'						=> ['CControllerWidgetFavMapsView',						'layout.widget',		'monitoring.widget.favmaps.view'],
+ 		'widget.geomap.view'						=> ['CControllerWidgetGeoMapView',						'layout.widget',		'monitoring.widget.geomap.view'],
+ 		'widget.graph.view'							=> ['CControllerWidgetGraphView',						'layout.widget',		'monitoring.widget.graph.view'],
+diff --git include/classes/widgets/CWidgetConfig.php include/classes/widgets/CWidgetConfig.php
+index d8a4a55..d5c6fc7 100644
+--- include/classes/widgets/CWidgetConfig.php
++++ include/classes/widgets/CWidgetConfig.php
+@@ -55,6 +55,7 @@ class CWidgetConfig {
+ 			WIDGET_DISCOVERY			=> _('Discovery status'),
+ 			WIDGET_FAV_GRAPHS			=> _('Favorite graphs'),
+ 			WIDGET_FAV_MAPS				=> _('Favorite maps'),
++			WIDGET_GAUGE				=> _('Gauge'),
+ 			WIDGET_GEOMAP				=> _('Geomap'),
+ 			WIDGET_ITEM					=> _('Item value'),
+ 			WIDGET_GRAPH				=> _('Graph (classic)'),
+@@ -100,6 +101,7 @@ class CWidgetConfig {
+ 			WIDGET_DISCOVERY			=> 'CWidget',
+ 			WIDGET_FAV_GRAPHS			=> 'CWidget',
+ 			WIDGET_FAV_MAPS				=> 'CWidget',
++			WIDGET_GAUGE				=> 'CWidget',
+ 			WIDGET_GEOMAP				=> 'CWidgetGeoMap',
+ 			WIDGET_ITEM					=> 'CWidgetItem',
+ 			WIDGET_GRAPH				=> 'CWidgetGraph',
+@@ -171,6 +173,7 @@ class CWidgetConfig {
+ 			WIDGET_DISCOVERY			=> ['width' => 6,	'height' => 3],
+ 			WIDGET_FAV_GRAPHS			=> ['width' => 4,	'height' => 3],
+ 			WIDGET_FAV_MAPS				=> ['width' => 4,	'height' => 3],
++			WIDGET_GAUGE				=> ['width' => 4,	'height' => 4],
+ 			WIDGET_GEOMAP				=> ['width' => 12,	'height' => 5],
+ 			WIDGET_ITEM					=> ['width' => 4,	'height' => 3],
+ 			WIDGET_GRAPH				=> ['width' => 12,	'height' => 5],
+@@ -267,6 +270,7 @@ class CWidgetConfig {
+ 			case WIDGET_DATA_OVER:
+ 			case WIDGET_TOP_HOSTS:
+ 			case WIDGET_DISCOVERY:
++			case WIDGET_GAUGE:
+ 			case WIDGET_GEOMAP:
+ 			case WIDGET_GRAPH:
+ 			case WIDGET_GRAPH_PROTOTYPE:
+@@ -370,6 +374,7 @@ class CWidgetConfig {
+ 		if ($view_mode == ZBX_WIDGET_VIEW_MODE_HIDDEN_HEADER) {
+ 			switch ($type) {
+ 				case WIDGET_CLOCK:
++				case WIDGET_GAUGE:
+ 				case WIDGET_GRAPH:
+ 				case WIDGET_MAP:
+ 				case WIDGET_SVG_GRAPH:
+@@ -435,6 +440,9 @@ class CWidgetConfig {
+ 			case WIDGET_DATA_OVER:
+ 				return new CWidgetFormDataOver($data, $templateid);
+ 
++			case WIDGET_GAUGE:
++				return new CWidgetFormGauge($data, $templateid);
++
+ 			case WIDGET_GEOMAP:
+ 				return new CWidgetFormGeoMap($data, $templateid);
+ 
+diff --git include/classes/widgets/forms/CWidgetFormGauge.php include/classes/widgets/forms/CWidgetFormGauge.php
+new file mode 100644
+index 0000000..d57d732
+--- /dev/null
++++ include/classes/widgets/forms/CWidgetFormGauge.php
+@@ -0,0 +1,213 @@
++<?php
++/*
++** Copyright (C) 2022 Jack Valko
++**
++** This program is free software; you can redistribute it and/or modify
++** it under the terms of the GNU General Public License as published by
++** the Free Software Foundation; either version 2 of the License, or
++** (at your option) any later version.
++**
++** This program is distributed in the hope that it will be useful,
++** but WITHOUT ANY WARRANTY; without even the implied warranty of
++** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++** GNU General Public License for more details.
++**
++** You should have received a copy of the GNU General Public License
++** along with this program; if not, write to the Free Software
++** Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
++**/
++
++// defines
++define('ZBX_WIDGET_GAUGE_MIN', -9999);
++define('ZBX_WIDGET_GAUGE_MAX', 99999);
++define('ZBX_WIDGET_GAUGE_MINOR_TICKS_MIN', 1);
++define('ZBX_WIDGET_GAUGE_MINOR_TICKS_MAX', 10);
++define('SHOW_GREEN_REGION_NONE', 0);
++define('SHOW_YELLOW_REGION_NONE', 0);
++define('SHOW_RED_REGION_NONE', 0);
++
++// gauge widget form
++class CWidgetFormGauge extends CWidgetForm {
++
++	public function __construct($data, $templateid) {
++		parent::__construct($data, $templateid, WIDGET_GAUGE);
++
++		// Gauge Label
++                $field_label = (new CWidgetFieldTextBox('label', _('Gauge Label'), $templateid))
++			->setFlags(CWidgetField::FLAG_NOT_EMPTY | CWidgetField::FLAG_LABEL_ASTERISK)
++			->setDefault("Label");
++
++                if (array_key_exists('label', $this->data)) {
++                        $field_label->setValue($this->data['label']);
++                }
++
++                $this->fields[$field_label->getName()] = $field_label;
++
++		// Item selector, numeric only
++		$field_item = (new CWidgetFieldMsItem('itemid', _('Item'), $templateid))
++			->setFlags(CWidgetField::FLAG_NOT_EMPTY | CWidgetField::FLAG_LABEL_ASTERISK)
++			->setMultiple(false)
++			->setFilterParameter('numeric', true);
++
++		if (array_key_exists('itemid', $this->data)) {
++			$field_item->setValue($this->data['itemid']);
++		}
++
++		$this->fields[$field_item->getName()] = $field_item;
++
++		// Min Gauge
++		$field_min = (new CWidgetFieldIntegerBox('min', _('Gauge Minimum'), ZBX_WIDGET_GAUGE_MIN, ZBX_WIDGET_GAUGE_MAX))
++                        ->setFlags(CWidgetField::FLAG_LABEL_ASTERISK)
++                        ->setDefault(0);
++
++                if (array_key_exists('min', $this->data)) {
++                        $field_min->setValue($this->data['min']);
++                }
++
++                $this->fields[$field_min->getName()] = $field_min;
++
++		// Max Gauge
++		$field_max = (new CWidgetFieldIntegerBox('max', _('Gauge Maximum'), ZBX_WIDGET_GAUGE_MIN, ZBX_WIDGET_GAUGE_MAX))
++                        ->setFlags(CWidgetField::FLAG_LABEL_ASTERISK)
++                        ->setDefault(100);
++
++                if (array_key_exists('max', $this->data)) {
++                        $field_max->setValue($this->data['max']);
++                }
++
++                $this->fields[$field_max->getName()] = $field_max;
++
++
++		// Minor Tick Marks
++		$field_minor_ticks = (new CWidgetFieldIntegerBox('minor_ticks', _('Minor Tick Marks'), ZBX_WIDGET_GAUGE_MINOR_TICKS_MIN, ZBX_WIDGET_GAUGE_MINOR_TICKS_MAX))
++                        ->setFlags(CWidgetField::FLAG_LABEL_ASTERISK)
++                        ->setDefault(5);
++
++                if (array_key_exists('minor_ticks', $this->data)) {
++                        $field_minor_ticks->setValue($this->data['minor_ticks']);
++                }
++
++                $this->fields[$field_minor_ticks->getName()] = $field_minor_ticks;
++
++		// Color regions
++		// "green" region
++                $field_green_region = (new CWidgetFieldRadioButtonList('green_region', _('Color Region 1'), [
++			SHOW_GREEN_REGION_NONE => _('Hide'),
++			1 => CSettingsHelper::get(CSettingsHelper::SEVERITY_NAME_1),
++			2 => CSettingsHelper::get(CSettingsHelper::SEVERITY_NAME_2),
++			3 => CSettingsHelper::get(CSettingsHelper::SEVERITY_NAME_3),
++			4 => CSettingsHelper::get(CSettingsHelper::SEVERITY_NAME_4),
++			5 => CSettingsHelper::get(CSettingsHelper::SEVERITY_NAME_5)
++                ]))
++                        ->setDefault(SHOW_GREEN_REGION_NONE)
++                        ->setModern(true)
++			->setAction('var disabled = jQuery(this).filter("[value=\''.SHOW_GREEN_REGION_NONE.'\']").is(":checked");'.
++                                'jQuery("#green_min").prop("disabled", disabled);'.
++                                'jQuery("#green_max").prop("disabled", disabled)'
++                        );
++
++                if (array_key_exists('green_region', $this->data)) {
++                        $field_green_region->setValue($this->data['green_region']);
++                }
++
++                $this->fields[$field_green_region->getName()] = $field_green_region;
++
++                // Green region min
++                $field_green_min = (new CWidgetFieldIntegerBox('green_min', _('Start'), ZBX_WIDGET_GAUGE_MIN, ZBX_WIDGET_GAUGE_MAX))
++                        ->setDefault(0);
++
++                if (array_key_exists('green_min', $this->data)) {
++                        $field_green_min->setValue($this->data['green_min']);
++                }
++                $this->fields[$field_green_min->getName()] = $field_green_min;
++
++                // Green region max
++                $field_green_max = (new CWidgetFieldIntegerBox('green_max', _('End'), ZBX_WIDGET_GAUGE_MIN, ZBX_WIDGET_GAUGE_MAX))
++                        ->setDefault(0);
++
++                if (array_key_exists('green_max', $this->data)) {
++                        $field_green_max->setValue($this->data['green_max']);
++                }
++                $this->fields[$field_green_max->getName()] = $field_green_max;
++
++		// "Yellow" region
++                $field_yellow_region = (new CWidgetFieldRadioButtonList('yellow_region', _('Color Region 2'), [
++			SHOW_YELLOW_REGION_NONE => _('Hide'),
++			1 => CSettingsHelper::get(CSettingsHelper::SEVERITY_NAME_1),
++			2 => CSettingsHelper::get(CSettingsHelper::SEVERITY_NAME_2),
++			3 => CSettingsHelper::get(CSettingsHelper::SEVERITY_NAME_3),
++			4 => CSettingsHelper::get(CSettingsHelper::SEVERITY_NAME_4),
++			5 => CSettingsHelper::get(CSettingsHelper::SEVERITY_NAME_5)
++                ]))
++                        ->setDefault(SHOW_YELLOW_REGION_NONE)
++                        ->setModern(true)
++			->setAction('var disabled = jQuery(this).filter("[value=\''.SHOW_YELLOW_REGION_NONE.'\']").is(":checked");'.
++                                'jQuery("#yellow_min").prop("disabled", disabled);'.
++                                'jQuery("#yellow_max").prop("disabled", disabled)'
++                        );
++
++                if (array_key_exists('yellow_region', $this->data)) {
++                        $field_yellow_region->setValue($this->data['yellow_region']);
++                }
++
++                $this->fields[$field_yellow_region->getName()] = $field_yellow_region;
++
++                // Yellow region min
++                $field_yellow_min = (new CWidgetFieldIntegerBox('yellow_min', _('Start'), ZBX_WIDGET_GAUGE_MIN, ZBX_WIDGET_GAUGE_MAX))
++                        ->setDefault(0);
++
++                if (array_key_exists('yellow_min', $this->data)) {
++                        $field_yellow_min->setValue($this->data['yellow_min']);
++                }
++                $this->fields[$field_yellow_min->getName()] = $field_yellow_min;
++
++                // Yellow region max
++                $field_yellow_max = (new CWidgetFieldIntegerBox('yellow_max', _('End'), ZBX_WIDGET_GAUGE_MIN, ZBX_WIDGET_GAUGE_MAX))
++                        ->setDefault(0);
++
++                if (array_key_exists('yellow_max', $this->data)) {
++                        $field_yellow_max->setValue($this->data['yellow_max']);
++                }
++                $this->fields[$field_yellow_max->getName()] = $field_yellow_max;
++
++		// "Red" region
++                $field_red_region = (new CWidgetFieldRadioButtonList('red_region', _('Color Region 3'), [
++			SHOW_RED_REGION_NONE => _('Hide'),
++			1 => CSettingsHelper::get(CSettingsHelper::SEVERITY_NAME_1),
++			2 => CSettingsHelper::get(CSettingsHelper::SEVERITY_NAME_2),
++			3 => CSettingsHelper::get(CSettingsHelper::SEVERITY_NAME_3),
++			4 => CSettingsHelper::get(CSettingsHelper::SEVERITY_NAME_4),
++			5 => CSettingsHelper::get(CSettingsHelper::SEVERITY_NAME_5)
++                ]))
++                        ->setDefault(SHOW_RED_REGION_NONE)
++                        ->setModern(true)
++			->setAction('var disabled = jQuery(this).filter("[value=\''.SHOW_RED_REGION_NONE.'\']").is(":checked");'.
++                                'jQuery("#red_min").prop("disabled", disabled);'.
++                                'jQuery("#red_max").prop("disabled", disabled)'
++                        );
++
++                if (array_key_exists('red_region', $this->data)) {
++                        $field_red_region->setValue($this->data['red_region']);
++                }
++
++                $this->fields[$field_red_region->getName()] = $field_red_region;
++
++                // Yellow region min
++                $field_red_min = (new CWidgetFieldIntegerBox('red_min', _('Start'), ZBX_WIDGET_GAUGE_MIN, ZBX_WIDGET_GAUGE_MAX))
++                        ->setDefault(0);
++
++                if (array_key_exists('red_min', $this->data)) {
++                        $field_red_min->setValue($this->data['red_min']);
++                }
++                $this->fields[$field_red_min->getName()] = $field_red_min;
++
++                // Yellow region max
++                $field_red_max = (new CWidgetFieldIntegerBox('red_max', _('End'), ZBX_WIDGET_GAUGE_MIN, ZBX_WIDGET_GAUGE_MAX))
++                        ->setDefault(0);
++
++                if (array_key_exists('red_max', $this->data)) {
++                        $field_red_max->setValue($this->data['red_max']);
++                }
++                $this->fields[$field_red_max->getName()] = $field_red_max;
++	}
++}
+diff --git include/classes/widgets/views/widget.gauge.form.view.php include/classes/widgets/views/widget.gauge.form.view.php
+new file mode 100644
+index 0000000..540bec3
+--- /dev/null
++++ include/classes/widgets/views/widget.gauge.form.view.php
+@@ -0,0 +1,76 @@
++<?php
++/*
++** Copyright (C) 2022 Jack Valko
++**
++** This program is free software; you can redistribute it and/or modify
++** it under the terms of the GNU General Public License as published by
++** the Free Software Foundation; either version 2 of the License, or
++** (at your option) any later version.
++**
++** This program is distributed in the hope that it will be useful,
++** but WITHOUT ANY WARRANTY; without even the implied warranty of
++** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++** GNU General Public License for more details.
++**
++** You should have received a copy of the GNU General Public License
++** along with this program; if not, write to the Free Software
++** Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
++**/
++
++// Gauge widget form view
++$fields = $data['dialogue']['fields'];
++$form = CWidgetHelper::createForm();
++$rf_rate_field = ($data['templateid'] === null) ? $fields['rf_rate'] : null;
++$form_list = CWidgetHelper::createFormList($data['dialogue']['name'], $data['dialogue']['type'],
++	$data['dialogue']['view_mode'], $data['known_widget_types'], $rf_rate_field
++);
++
++$field_itemid = CWidgetHelper::getItem($fields['itemid'], $data['captions']['ms']['items']['itemid'], $form->getName());
++$form_list->addRow(CWidgetHelper::getMultiselectLabel($fields['itemid']), $field_itemid);
++$scripts = [$field_itemid->getPostJS()]; 
++
++// Label
++$form_list->addRow(CWidgetHelper::getLabel($fields['label']), CWidgetHelper::getTextBox($fields['label']));
++
++// Min Gauge
++$form_list->addRow(CWidgetHelper::getLabel($fields['min']), CWidgetHelper::getIntegerBox($fields['min']));
++
++// Max Gauge
++$form_list->addRow(CWidgetHelper::getLabel($fields['max']), CWidgetHelper::getIntegerBox($fields['max']));
++
++// Major/Minor tick marks
++$form_list->addRow(CWidgetHelper::getLabel($fields['minor_ticks']), CWidgetHelper::getIntegerBox($fields['minor_ticks']));
++
++// Green region
++$form_list->addRow(CWidgetHelper::getLabel($fields['green_region']), CWidgetHelper::getRadioButtonList($fields['green_region']));
++$form_list->addRow(CWidgetHelper::getLabel($fields['green_min']), CWidgetHelper::getIntegerBox($fields['green_min'])
++                ->setEnabled($fields['green_region']->getValue() !== SHOW_GREEN_REGION_NONE)
++);
++$form_list->addRow(CWidgetHelper::getLabel($fields['green_max']), CWidgetHelper::getIntegerBox($fields['green_max'])
++                ->setEnabled($fields['green_region']->getValue() !== SHOW_GREEN_REGION_NONE)
++);
++
++// Yellow region
++$form_list->addRow(CWidgetHelper::getLabel($fields['yellow_region']), CWidgetHelper::getRadioButtonList($fields['yellow_region']));
++$form_list->addRow(CWidgetHelper::getLabel($fields['yellow_min']), CWidgetHelper::getIntegerBox($fields['yellow_min'])
++                ->setEnabled($fields['yellow_region']->getValue() !== SHOW_YELLOW_REGION_NONE)
++);
++$form_list->addRow(CWidgetHelper::getLabel($fields['yellow_max']), CWidgetHelper::getIntegerBox($fields['yellow_max'])
++                ->setEnabled($fields['yellow_region']->getValue() !== SHOW_YELLOW_REGION_NONE)
++);
++
++// Red region
++$form_list->addRow(CWidgetHelper::getLabel($fields['red_region']), CWidgetHelper::getRadioButtonList($fields['red_region']));
++$form_list->addRow(CWidgetHelper::getLabel($fields['red_min']), CWidgetHelper::getIntegerBox($fields['red_min'])
++                ->setEnabled($fields['red_region']->getValue() !== SHOW_RED_REGION_NONE)
++);
++$form_list->addRow(CWidgetHelper::getLabel($fields['red_max']), CWidgetHelper::getIntegerBox($fields['red_max'])
++                ->setEnabled($fields['red_region']->getValue() !== SHOW_RED_REGION_NONE)
++);
++
++$form->addItem($form_list);
++
++return [
++	'form' => $form,
++	'scripts' => $scripts
++];
+diff --git include/defines.inc.php include/defines.inc.php
+index 392bce0..f2a4ca9 100644
+--- include/defines.inc.php
++++ include/defines.inc.php
+@@ -1518,6 +1518,7 @@ define('WIDGET_CLOCK',				'clock');
+ define('WIDGET_DISCOVERY',			'discovery');
+ define('WIDGET_FAV_GRAPHS',			'favgraphs');
+ define('WIDGET_FAV_MAPS',			'favmaps');
++define('WIDGET_GAUGE',				'gauge');
+ define('WIDGET_GEOMAP',				'geomap');
+ define('WIDGET_GRAPH',				'graph');
+ define('WIDGET_GRAPH_PROTOTYPE',	'graphprototype');
