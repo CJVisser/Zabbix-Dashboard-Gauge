@@ -4,7 +4,7 @@ Add a Gauge Widget to your Zabbix Dashboards.
 
 ## What's new
 ##### March 29, 2002
-* FIX: Widget header now functional (![CJVisser](http://github.com/CJVisser/))
+* FIX: Widget header now functional ([CJVisser](http://github.com/CJVisser/))
 
 ##### March 15, 2002
 * RELEASE: Patch now available for Zabbix 6.0.2
