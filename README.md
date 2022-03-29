@@ -3,6 +3,9 @@
 Add a Gauge Widget to your Zabbix Dashboards.
 
 ## What's new
+##### March 29, 2002
+* FIX: Widget header now functional (![CJVisser](/CJVisser))
+
 ##### March 15, 2002
 * RELEASE: Patch now available for Zabbix 6.0.2
 * FIX: Defined boundary arcs for shaded areas to not exceed min or max
@@ -148,7 +151,7 @@ Patch uninstall completed successfully.
 Please refresh your browser before continuing.
 ```
 
-## Configuring the widget
+## Configuring the Widget
 ![Dark Mode Gauge Cluster](images/gauge-image-small-dark.png)
 Open a dashboard and click 'Edit Dashboard' in the upper right. Click '+ Add' to add a widget.  You should see 'Gauge' as a new selection in the add widget dropdown.  Each widget requires an Item, Gauge Label, Gauge Minimum and Maximum, and Minor Tick Marks.  Only numeric item types are supported. If you dont want minor tick marks, enter 1.
 
