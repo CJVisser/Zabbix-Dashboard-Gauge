@@ -156,7 +156,9 @@ Please refresh your browser before continuing.
 
 ## Configuring the Widget
 ![Dark Mode Gauge Cluster](images/gauge-image-small-dark.png)
-Open a dashboard and click 'Edit Dashboard' in the upper right. Click '+ Add' to add a widget.  You should see 'Gauge' as a new selection in the add widget dropdown.  Each widget requires an Item, Gauge Label, Gauge Minimum and Maximum, and Minor Tick Marks.  Only numeric item types are supported. If you dont want minor tick marks, enter 1.
+Open a dashboard and click 'Edit Dashboard' in the upper right. Click '+ Add' to add a widget.  You should see 'Gauge' as a new selection in the add widget dropdown.  
+![Dashboard Widget Dropdown](images/widget-dropdown-with-gauge.png)
+Each widget requires an Item, Gauge Label, Gauge Minimum and Maximum, and Minor Tick Marks.  Only numeric item types are supported. If you dont want minor tick marks, enter 1.
 
 If you configure highlighted regions they will overlap and there is no collision detection.  Each region is applied in layers, from first to third.
 
