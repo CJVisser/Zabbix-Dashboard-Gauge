@@ -3,7 +3,11 @@
 Add a Gauge Widget to your Zabbix Dashboards.
 
 ## What's new
-##### April 5, 2002
+##### April 6, 2022
+* FIX: Updated patch 6.0.3 for better CSS support in Firefox
+* BUG: Old, unfixed Firefox calc() bug draws shaded regions as circles instead of arc
+
+##### April 5, 2022
 * RELEASE: Patch now available for Zabbix 6.0.3
 
 ##### March 29, 2022
