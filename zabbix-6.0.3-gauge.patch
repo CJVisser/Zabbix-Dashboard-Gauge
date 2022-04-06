@@ -370,10 +370,10 @@ index 0000000..cb58307
 +
 +echo json_encode($output);
 diff --git assets/styles/blue-theme.css assets/styles/blue-theme.css
-index 913043c..82be790 100644
+index 913043c..c99744f 100644
 --- assets/styles/blue-theme.css
 +++ assets/styles/blue-theme.css
-@@ -6980,3 +6980,24 @@ z-select.z-select-host-interface li[disabled] .description:not(:empty),
+@@ -6980,3 +6980,21 @@ z-select.z-select-host-interface li[disabled] .description:not(:empty),
  .leaflet-container {
    height: 100%;
    z-index: 1; }
@@ -387,11 +387,8 @@ index 913043c..82be790 100644
 +.gauge text { 
 +  fill: #000000; }
 +
-+.gauge #minortick {
-+  stroke: #000000; }
-+
-+.gauge #majortick {
-+  stroke: #000000; }
++#majortick { stroke: #000000; }
++#minortick { stroke: #000000; }
 +
 +.gauge .outer-circle {
 +  stroke: #000000; }
@@ -399,10 +396,10 @@ index 913043c..82be790 100644
 +.gauge .gradient-circle {
 +  stroke: #cccccc; }
 diff --git assets/styles/dark-theme.css assets/styles/dark-theme.css
-index 814a3b2..45e44f6 100644
+index 814a3b2..135402c 100644
 --- assets/styles/dark-theme.css
 +++ assets/styles/dark-theme.css
-@@ -7086,3 +7086,24 @@ z-select.z-select-host-interface li[disabled] .description:not(:empty),
+@@ -7086,3 +7086,21 @@ z-select.z-select-host-interface li[disabled] .description:not(:empty),
  
  .selected.expanded .icon-filter::before {
    background-position: -87px -547px; }
@@ -416,11 +413,8 @@ index 814a3b2..45e44f6 100644
 +.gauge text {
 +  fill: #ffffff; }
 +
-+.gauge #minortick {
-+  stroke: #ffffff; }
-+
-+.gauge #majortick {
-+  stroke: #ffffff; }
++#minortick { stroke: #ffffff; }
++#majortick { stroke: #ffffff; }
 +
 +.gauge .outer-circle {
 +  stroke: #ffffff; }
