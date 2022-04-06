@@ -108,10 +108,10 @@ index 0000000..a68c0a6
 +}
 diff --git app/views/monitoring.widget.gauge.view.php app/views/monitoring.widget.gauge.view.php
 new file mode 100644
-index 0000000..cb58307
+index 0000000..173c85f
 --- /dev/null
 +++ app/views/monitoring.widget.gauge.view.php
-@@ -0,0 +1,257 @@
+@@ -0,0 +1,262 @@
 +<?php
 +/*
 +** Copyright (C) 2022 Jack Valko
@@ -184,6 +184,8 @@ index 0000000..cb58307
 +	/* create shaded regions */
 +	$shading = new CTag('g', true);
 +	$shading->addClass('shading');
++	$shaded_radius = 53;
++	$shaded_circ = 2 * (22/7) * $shaded_radius;
 +
 +	$regions = array();
 +	$regions = json_decode($data['color_string'], true);
@@ -203,6 +205,9 @@ index 0000000..cb58307
 +		elseif ($region['to'] > $max_value) {
 +			$region['to'] = $max_value;;
 +		}
++		/* compute arc length.  would rather calc() this in browser but not supported in moz/firefox */
++		$shaded_offset = $shaded_circ * abs($region['to'] - $region['from']) / abs($max_value - $min_value) * $max_radians / 360;
++	
 +		$shading->addItem(
 +			(new CTag('g', true))
 +			->setAttribute('transform', 'rotate(' . $start . ' ' . $cx . ' ' . $cy . ')')
@@ -210,12 +215,12 @@ index 0000000..cb58307
 +				(new Ctag('circle'))
 +				->setAttribute('cx', $cx)
 +				->setAttribute('cy', $cy)
-+				->setAttribute('r', '53')
++				->setAttribute('r', $shaded_radius)
 +				->setAttribute('fill', 'none')
 +				->setAttribute('stroke', $region['color'])
 +				->setAttribute('stroke-opacity', '80%')
 +				->setAttribute('stroke-width', '9')
-+				->setAttribute('stroke-dasharray', 'calc(2*22/7*53*' . abs($region['to'] - $region['from']) . '/' . abs($max_value - $min_value) . '*' . $max_radians . '/360), calc(2*22/7*53)')
++				->setAttribute('stroke-dasharray', $shaded_offset . ', ' . $shaded_circ)
 +			)
 +		);
 +	}
