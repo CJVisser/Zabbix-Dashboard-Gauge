@@ -5,6 +5,7 @@ Add a Gauge Widget to your Zabbix Dashboards.
 ## What's new
 ##### April 19, 2022
 * RELEASE: Patch now available for Zabbix 6.0.4
+* RELEASE: Patch now available for Zabbix 5.4.12
 * ENHANCEMENT: Optional indicator light with strobe support for Zabbix 6.0.3 and later
 * FIX: Refactor edit widget layout
 * FIX: Eliminate old pre-release code that supported google chart
