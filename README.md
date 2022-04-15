@@ -3,6 +3,13 @@
 Add a Gauge Widget to your Zabbix Dashboards.
 
 ## What's new
+##### April 19, 2022
+* RELEASE: Patch now available for Zabbix 6.0.4
+* ENHANCEMENT: Optional indicator light with strobe support for Zabbix 6.0.3 and later
+* FIX: Refactor edit widget layout
+* FIX: Eliminate old pre-release code that supported google chart
+* FIX: Partial fix for broken min/max logic
+
 ##### April 6, 2022
 * FIX: Updated patch 6.0.3 for better CSS support in Firefox
 * FIX: Updated patch 6.0.3 to support shaded region drawing logic for Firefox and Mozilla
@@ -30,16 +37,16 @@ Add a Gauge Widget to your Zabbix Dashboards.
 * Initial Public Beta Release
 
 ## About the Gauge
-![Dashboard Gauge Cluster](images/gauge-image-small.png)
+![Dashboard Gauge Cluster](images/gauge-image-small-with-indicator.gif)
 The design of the Zabbix Gauge Widget is strongly influenced by [Google Chart's 'Gauge'](https://developers.google.com/chart/interactive/docs/gallery/gauge). It tries to emulate most of the configurable features of the google release but it renders as svg without javascript while using zabbix native function calls. Because it's a native widget, it can be resized or moved around just like any other on your dashboard.
 
-Configuration of the gauge supports naming the widget, labeling the gauge, selecting your item, the gauge range, displaying the number of 'minor ticks' between 'major ticks', and highlighting up to 3 regions of the gauge to indicate normal and problem value ranges.  The gauge also displays the value with units.
+Configuration of the gauge supports naming the widget, labeling the gauge, selecting your item, the gauge range, displaying the number of 'minor ticks' between 'major ticks', and defining up to three shaded regions with optional indicator light to show  normal and problem value ranges.  The gauge also displays the value with units.
 
 ## What's inside
 The installer script and related patches add functionality to zabbix-web to display item values in a gauge-style widget. _gauge-installer_ is an interactive script, it will confirm your zabbix docroot, zabbix release, backup your docroot into a tar file, and attempt a dry-run of the install before asking you if you are sure you really really want to install it.  There is also an option to reverse the install in case you change your mind.  See the section "Working with Patches" for more info. 
 
 ## Prerequisites
-* Zabbix 5.4.11, 6.0.1 - 6.0.3
+* Zabbix 5.4.11, 6.0.1 - 6.0.4
 * Linux binaries: _patch, grep, tar, cut, date, bash, git_
 
 ## Install
@@ -163,7 +170,10 @@ Please refresh your browser before continuing.
 ![Dark Mode Gauge Cluster](images/gauge-image-small-dark.png)
 Open a dashboard and click 'Edit Dashboard' in the upper right. Click '+ Add' to add a widget.  You should see 'Gauge' as a new selection in the add widget dropdown.  
 
-Each widget requires an Item, Gauge Label, Gauge Minimum and Maximum, and Minor Tick Marks.  Only numeric item types are supported. If you dont want minor tick marks, enter 1.  If you configure highlighted regions they will overlap and there is no collision detection.  Each region is applied in layers, from first to third.
+Each widget requires an Item, Gauge Label, Gauge Minimum and Maximum, and Minor Tick Marks.  Only numeric item types are supported. If you dont want minor tick marks, enter 1.  If you configure highlighted regions that overlap this is allowed and there is no collision detection.  Each region is applied in layers, from first to third.
+
+### Indicator Light
+An optional indicator light is supported on Zabbix 6.0.3 and later.  When a value is within a highlight region with an indicator light configured, an ISO character indicating a warning appears in the lower right of the gauge.  This light can be set to be solid on, or set to strobe from slow to annoying.
 
 ![Dashboard Gauge](images/gauge-edit-widget.png)
 ## Bugs

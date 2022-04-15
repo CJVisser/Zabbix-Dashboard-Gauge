@@ -105,10 +105,10 @@ index 0000000..72bacd8
 +}
 diff --git app/views/monitoring.widget.gauge.view.php app/views/monitoring.widget.gauge.view.php
 new file mode 100644
-index 0000000..ec2ff15
+index 0000000..1a2c02c
 --- /dev/null
 +++ app/views/monitoring.widget.gauge.view.php
-@@ -0,0 +1,318 @@
+@@ -0,0 +1,320 @@
 +<?php
 +/*
 +** Copyright (C) 2022 Jack Valko
@@ -140,6 +140,7 @@ index 0000000..ec2ff15
 +	$cy = 75;
 +	$max_radians = 240;
 +	$indicator_char = "⚠";
++	$indicator_found = 0;
 +	$max_value = $data['max'];
 +	$min_value = $data['min'];
 +	$label = $data['label'];
@@ -232,8 +233,8 @@ index 0000000..ec2ff15
 +		/* indicator light */
 +		/* only activate light when value is in range */
 +		if ($lastvalue <= $region['to'] && $lastvalue >= $region['from']) {
-+			/* skip if value is 'None' (0) */
-+			if ($region['light'] > ZBX_WIDGET_GAUGE_INDICATOR_NONE) {
++			/* skip if value is 'None' (0) or if indicator has already been found */
++			if ($region['light'] > ZBX_WIDGET_GAUGE_INDICATOR_NONE && ! $indicator_found) {
 +				/* position */
 +				$light_ry = 105;
 +				$light_rx = 92;
@@ -274,6 +275,7 @@ index 0000000..ec2ff15
 +						->setAttribute('values', $blink_string)
 +					)
 +				);
++				$indicator_found++;
 +			}
 +		}
 +	}
@@ -713,10 +715,10 @@ index 0000000..c0f43f0
 +}
 diff --git include/classes/widgets/views/widget.gauge.form.view.php include/classes/widgets/views/widget.gauge.form.view.php
 new file mode 100644
-index 0000000..060e919
+index 0000000..f807b97
 --- /dev/null
 +++ include/classes/widgets/views/widget.gauge.form.view.php
-@@ -0,0 +1,73 @@
+@@ -0,0 +1,72 @@
 +<?php
 +/*
 +** Copyright (C) 2022 Jack Valko
@@ -789,7 +791,6 @@ index 0000000..060e919
 +	'form' => $form,
 +	'scripts' => $scripts
 +];
-+
 diff --git include/defines.inc.php include/defines.inc.php
 index 386b6d2..c2b4b6e 100644
 --- include/defines.inc.php
