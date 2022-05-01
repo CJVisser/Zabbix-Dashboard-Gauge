@@ -56,6 +56,9 @@ The installer script and related patches add functionality to zabbix-web to disp
 2. ```cd Zabbix-Dashboard-Gauge ; ./gauge-installer```
 3. Browser-refresh your dashboard pages  
 
+## Why Isn't This a Frontend Module?
+Good question.  It doesn't appear possible to develop a frontend module to add a dashboard widget.  This would be my preferred method, it would sure make releases easier!  As long as the Zabbix dashboard remains a walled garden a patch is the only option. If I'm mistaken about this please open an issue.
+
 ## Working with Patches
 1. _Keep your .patch files_
 2. _You must always reverse the patch before upgrading zabbix-web_
