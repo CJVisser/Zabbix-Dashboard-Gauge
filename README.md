@@ -47,17 +47,27 @@ Configuration of the gauge supports naming the widget, labeling the gauge, selec
 ## What's inside
 The installer script and related patches add functionality to zabbix-web to display item values in a gauge-style widget. _gauge-installer_ is an interactive script, it will confirm your zabbix docroot, zabbix release, backup your docroot into a tar file, and attempt a dry-run of the install before asking you if you are sure you really really want to install it.  There is also an option to reverse the install in case you change your mind.  See the section "Working with Patches" for more info. 
 
+### What Changes Are Made to the Zabbix Docroot?
+* Four new files 
+** app/controllers/CControllerWidgetGaugeView.php
+** app/views/monitoring.widget.gauge.view.php
+** include/classes/widgets/forms/CWidgetFormGauge.php
+** include/classes/widgets/views/widget.gauge.form.view.php 
+* Add a route to the gauge functions in include/classes/mvc/CRouter.php
+* Additional css appended to end of assets/styles/blue-theme.css and dark-theme.css
+* Defined widget constant in include/defines.inc.php
+
+### Why Isn't This a Frontend Module?
+It doesn't appear possible to develop a frontend module to add a dashboard widget.  This would be my preferred method, it would sure make releases easier! If I'm mistaken about this please open an issue.
+
 ## Prerequisites
-* Zabbix 5.0.22 - 5.0.23, 5.4.11 - 5.4.12, 6.0.1 - 6.0.4
+* Zabbix 5.0.22 - 5.0.23, 5.4.11 - 5.4.12, or 6.0.1 - 6.0.4
 * Linux binaries: _patch, grep, tar, cut, date, bash, git_
 
 ## Install
 1. ```cd /root ; git clone https://github.com/jack-valko/Zabbix-Dashboard-Gauge.git```
 2. ```cd Zabbix-Dashboard-Gauge ; ./gauge-installer```
 3. Browser-refresh your dashboard pages  
-
-## Why Isn't This a Frontend Module?
-Good question.  It doesn't appear possible to develop a frontend module to add a dashboard widget.  This would be my preferred method, it would sure make releases easier!  As long as the Zabbix dashboard remains a walled garden a patch is the only option. If I'm mistaken about this please open an issue.
 
 ## Working with Patches
 1. _Keep your .patch files_
