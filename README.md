@@ -188,7 +188,7 @@ Open a dashboard and click 'Edit Dashboard' in the upper right. Click '+ Add' to
 Each widget requires an Item, Gauge Label, Gauge Minimum and Maximum, and Minor Tick Marks.  Only numeric item types are supported. If you dont want minor tick marks, enter 1.  If you configure highlighted regions that overlap this is allowed and there is no collision detection.  Each region is applied in layers, from first to third.
 
 ### Indicator Light
-An optional indicator light is supported on Zabbix 6.0.3 and later.  When a value is within a highlight region and an indicator light configured, an ISO character indicating a warning appears in the lower right of the gauge.  This light can be set to be solid on, or set to strobe from slow (4.0 second period) to annoying (0.5 second period).
+An optional indicator light is supported on Zabbix 6.0.3 and later.  When a value is within a highlighted region and an indicator light configured, an ISO character indicating a warning appears in the lower right of the gauge.  This light can be set to be solid on, or set to strobe from slow (4.0 second period) to annoying (0.5 second period).
 
 ![Dashboard Gauge](images/gauge-edit-widget.png)
 ## Bugs
