@@ -53,6 +53,7 @@ The installer script and related patches add functionality to zabbix-web to disp
   - app/views/monitoring.widget.gauge.view.php
   - include/classes/widgets/forms/CWidgetFormGauge.php
   - include/classes/widgets/views/widget.gauge.form.view.php 
+* Add gauge widget default behavior in include/classes/widgets/CWidgetConfig.php 
 * Add a route to the gauge functions in include/classes/mvc/CRouter.php
 * Additional css appended to end of assets/styles/blue-theme.css and dark-theme.css
 * Defined widget constant in include/defines.inc.php
