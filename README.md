@@ -190,6 +190,6 @@ Each widget requires an Item, Gauge Label, Gauge Minimum and Maximum, and Minor 
 ### Indicator Light
 An optional indicator light is supported on Zabbix 6.0.3 and later.  When a value is within a highlighted region and an indicator light configured, an ISO character indicating a warning appears in the lower right of the gauge.  This light can be set to be solid on, or set to strobe from slow (4.0 second period) to annoying (0.5 second period).
 
-![Dashboard Gauge](images/gauge-edit-widget.png)
+![Dashboard Gauge](images/gauge-edit-widget-with-indicator.png)
 ## Bugs
 There are quite a few.  Head over to [issues](../../issues/) to see them all.  Please report any new ones.
