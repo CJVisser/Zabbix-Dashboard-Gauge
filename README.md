@@ -3,6 +3,9 @@
 Add a Gauge Widget to your Zabbix Dashboards.
 
 ## What's new
+##### May 30, 2022
+* RELEASE: Patch now available for Zabbix 6.0.5
+
 ##### May 3, 2022
 * RELEASE: Patch now available for Zabbix 6.0.4
 * RELEASE: Patch now available for Zabbix 5.4.12
@@ -12,30 +15,15 @@ Add a Gauge Widget to your Zabbix Dashboards.
 * FIX: Eliminate old pre-release code that supported google chart
 * FIX: Partial fix for broken min/max logic
 
-##### April 6, 2022
+##### March - April, 2022
 * FIX: Updated patch 6.0.3 for better CSS support in Firefox
 * FIX: Updated patch 6.0.3 to support shaded region drawing logic for Firefox and Mozilla
-* BUG: Broken min/max error checking on shaded regions
-
-##### April 5, 2022
-* RELEASE: Patch now available for Zabbix 6.0.3
-
-##### March 29, 2022
 * FIX: Widget header now functional ([CJVisser](http://github.com/CJVisser/))
-
-##### March 15, 2022
-* RELEASE: Patch now available for Zabbix 6.0.2
 * FIX: Defined boundary arcs for shaded areas to not exceed min or max
 * FIX: Needle movement restricted inside min and max
-* ENHANCEMENT: Some dark mode updates
-
-##### March 14, 2022
-* ENHANCEMENT: Patch now available for Zabbix 5.4.11
 * ENHANCEMENT: Now with dark mode!
 * ENHANCEMENT: Changed padding value, gauge is a little larger
 * FIX: Performance issue with API query resolved
-
-##### March 13, 2022
 * Initial Public Beta Release
 
 ## About the Gauge
@@ -62,7 +50,7 @@ The installer script and related patches add functionality to zabbix-web to disp
 It doesn't appear possible to develop a frontend module to add a dashboard widget.  This would be my preferred method, it would sure make releases easier! If I'm mistaken about this please open an issue.
 
 ## Prerequisites
-* Zabbix 5.0.22 - 5.0.23, 5.4.11 - 5.4.12, or 6.0.1 - 6.0.4
+* Zabbix 5.0.22 - 5.0.23, 5.4.11 - 5.4.12, or 6.0.1 - 6.0.5
 * Linux binaries: _patch, grep, tar, cut, date, bash, git_
 
 ## Install
