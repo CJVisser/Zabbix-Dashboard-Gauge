@@ -3,6 +3,9 @@
 Add a Gauge Widget to your Zabbix Dashboards.
 
 ## What's new
+##### June 27, 2022
+* RELEASE: Patch now available for Zabbix 6.0.6, 5.0.25
+
 ##### May 31, 2022
 * FIX: Cleaned-up scratch files accidentially added to 6.0.5 patch file. 
 
@@ -53,7 +56,7 @@ The installer script and related patches add functionality to zabbix-web to disp
 It doesn't appear possible to develop a frontend module to add a dashboard widget.  This would be my preferred method, it would sure make releases easier! If I'm mistaken about this please open an issue.
 
 ## Prerequisites
-* Zabbix 5.0.22 - 5.0.24, 5.4.11 - 5.4.12, or 6.0.1 - 6.0.5
+* Zabbix 5.0.22 - 5.0.25, 5.4.11 - 5.4.12, or 6.0.1 - 6.0.6
 * Linux binaries: _patch, grep, tar, cut, date, bash, git_
 
 ## Install
