@@ -66,10 +66,11 @@ VERSION=`$GREP 'ZABBIX_VERSION' $DOCROOT/include/defines.inc.php 2>/dev/null | $
 
 [ -z "${VERSION}" ] && echo "ERROR: Unknown Zabbix server version" && exit
 echo "${VERSION}"
+RELEASE=`echo ${VERSION} | $CUT -d"." -f1,2`
 
 # confirm we have a patch for this release
 echo -n "Looking for the patch ... "
-ZABBIX_PATCH_FILE=`echo ./zabbix-${VERSION}-gauge.patch`
+ZABBIX_PATCH_FILE=`echo ./zabbix-${RELEASE}/zabbix-${VERSION}-gauge.patch`
 
 [ ! -e ${ZABBIX_PATCH_FILE} ] && echo "ERROR: Patch file for this release was not found" && exit 
 echo "OK"
