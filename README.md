@@ -3,26 +3,19 @@
 Add a Gauge Widget to your Zabbix Dashboards.
 
 ## What's new
+##### July 5, 2022
+* RELEASE: Patch now available for Zabbix 6.2.0
+
 ##### June 27, 2022
 * RELEASE: Patch now available for Zabbix 6.0.6, 5.0.25
 * RELEASE: gauge-installer sub-directories added for readability 
 
-##### May 31, 2022
-* FIX: Cleaned-up scratch files accidentially added to 6.0.5 patch file. 
-
-##### May 30, 2022
+##### March - May, 2022
 * RELEASE: Patch now available for Zabbix 6.0.5, 5.0.24
-
-##### May 3, 2022
 * RELEASE: Patch now available for Zabbix 6.0.4
 * RELEASE: Patch now available for Zabbix 5.4.12
 * RELEASE: Backport now available for Zabbix 5.0.22 - 5.0.23
 * ENHANCEMENT: Optional indicator light with strobe support for Zabbix 6.0.3 and later
-* FIX: Refactor edit widget layout
-* FIX: Eliminate old pre-release code that supported google chart
-* FIX: Partial fix for broken min/max logic
-
-##### March - April, 2022
 * FIX: Updated patch 6.0.3 for better CSS support in Firefox
 * FIX: Updated patch 6.0.3 to support shaded region drawing logic for Firefox and Mozilla
 * FIX: Widget header now functional ([CJVisser](http://github.com/CJVisser/))
@@ -57,7 +50,7 @@ The installer script and related patches add functionality to zabbix-web to disp
 It doesn't appear possible to develop a frontend module to add a dashboard widget.  This would be my preferred method, it would sure make releases easier! If I'm mistaken about this please open an issue.
 
 ## Prerequisites
-* Zabbix 5.0.22 - 5.0.25, 5.4.11 - 5.4.12, or 6.0.1 - 6.0.6
+* Zabbix 5.0.22 - 5.0.25, 5.4.11 - 5.4.12, or 6.0.1 - 6.0.6, 6.2.0
 * Linux binaries: _patch, grep, tar, cut, date, bash, git_
 
 ## Install
