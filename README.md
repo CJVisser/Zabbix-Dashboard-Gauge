@@ -13,12 +13,8 @@ Add a Gauge Widget to your Zabbix Dashboards.
 ##### July 5, 2022
 * RELEASE: Patch now available for Zabbix 6.2.0
 
-##### June 27, 2022
-* RELEASE: Patch now available for Zabbix 6.0.6, 5.0.25
-* RELEASE: gauge-installer sub-directories added for readability 
-
-##### March - May, 2022
-* RELEASE: Patches now available for Zabbix 5.0.22 - 5.0.24, 5.4.11 - 5.4.12, 6.0.1 - 6.0.5
+##### March - June, 2022
+* RELEASE: Patches now available for Zabbix 5.0.22 - 5.0.25, 5.4.11 - 5.4.12, 6.0.1 - 6.0.6
 * ENHANCEMENT: Optional indicator light with strobe support for Zabbix 6.0.3 and later
 * FIX: Updated patch 6.0.3 for better CSS support in Firefox
 * FIX: Updated patch 6.0.3 to support shaded region drawing logic for Firefox and Mozilla
