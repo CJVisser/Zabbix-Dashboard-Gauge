@@ -3,6 +3,10 @@
 Add a Gauge Widget to your Zabbix Dashboards.
 
 ## What's new
+##### September 10, 2022
+* RELEASE: Patches now available for Zabbix 6.0.8, 6.0.9, 6.2.2, 6.2.3
+* NEWS: Support for Zabbix 5.x has been discontinued
+
 ##### July 28, 2022
 * RELEASE: Patches now available for Zabbix 5.0.26, 6.0.7, 6.2.1
 
