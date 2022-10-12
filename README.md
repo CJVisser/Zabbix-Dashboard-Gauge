@@ -50,7 +50,7 @@ The installer script and related patches add functionality to zabbix-web to disp
 It doesn't appear possible to develop a frontend module to add a dashboard widget.  This would be my preferred method, it would sure make releases easier! If I'm mistaken about this please open an issue.
 
 ## Prerequisites
-* Zabbix 5.0.22 - 5.0.26, 5.4.11 - 5.4.12, or 6.0.1 - 6.0.7, 6.2.0 - 6.2.1
+* Zabbix 5.0.22 - 5.0.26, 5.4.11 - 5.4.12, or 6.0.1 - 6.0.9, 6.2.0 - 6.2.3
 * Linux binaries: _patch, grep, tar, cut, date, bash, git_
 
 ## Install
