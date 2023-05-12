@@ -181,4 +181,4 @@ An optional indicator light is supported on Zabbix 6.0.3 and later.  When a valu
 
 ![Dashboard Gauge](images/gauge-edit-widget-with-indicator.png)
 ## Bugs
-There are quite a few.  Head over to [issues](../../issues/) to see them all.  Please report any new ones.
+Head over to [issues](../../issues/) to see them all.  Please report any new ones.
